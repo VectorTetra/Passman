@@ -1,0 +1,412 @@
+﻿<Window x:Class="Kurs_Passman.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:conv="clr-namespace:Kurs_Passman.Converters"
+        xmlns:mod="clr-namespace:Kurs_Passman.ViewModels"
+        xmlns:local="clr-namespace:Kurs_Passman"
+        mc:Ignorable="d"
+        Title="PassMan" Height="450" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Window.Resources>
+        <conv:HeightConverter x:Key="hconv"/>
+        <mod:MainViewModel x:Key="mvmod"/>
+    </Window.Resources>
+    <Grid Background="Bisque" DataContext="{StaticResource mvmod}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="0.6*"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.4*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid Background="Lavender">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.65*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBox Margin="5" 
+                         FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}"
+                         Text="{Binding SearchingExpression}"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+                    <CheckBox Margin="5,0,0,0"  VerticalContentAlignment="Center" IsChecked="{Binding IsSearchByLogin}">
+                        <Viewbox>
+                            <TextBlock >По Логіну</TextBlock>
+                        </Viewbox>
+                    </CheckBox>
+                    <CheckBox Margin="5,0,0,0" VerticalContentAlignment="Center" Grid.Column="1" IsChecked="{Binding IsSearchBySiteName}">
+                        <Viewbox>
+                            <TextBlock >По назві сайту</TextBlock>
+                        </Viewbox></CheckBox>
+                    <CheckBox Margin="5,0,0,0" VerticalContentAlignment="Center" Grid.Row="1" IsChecked="{Binding IsSearchBySiteAddress}">
+                        <Viewbox>
+                            <TextBlock >По адресі сайту</TextBlock>
+                        </Viewbox></CheckBox>
+                    <CheckBox Margin="5,0,0,0" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1" IsChecked="{Binding IsSearchBySiteDescription}">
+                        <Viewbox>
+                            <TextBlock >По опису сайту</TextBlock>
+                        </Viewbox></CheckBox>
+                    <Button Margin="5" Grid.Row="2" Grid.ColumnSpan="2" Background="LimeGreen"
+                            Command="{Binding SearchAccountsCommand}">
+                        <Viewbox>
+                            <TextBlock >Пошук</TextBlock>
+                        </Viewbox>
+                    </Button>
+                </Grid>
+            </Grid>
+
+            <ListBox Margin="5" Grid.Row="1" Background="Beige" ItemsSource="{Binding SearchedAccounts}" SelectedItem="{Binding SelectedAccount}"
+                     SelectionChanged="ListBox_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Login: "/>
+                                <TextBlock Text="{Binding Login}"></TextBlock>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Site Address: "/>
+                                <TextBlock Text="{Binding SiteAddress}"></TextBlock>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Site Name: "/>
+                                <TextBlock Text="{Binding SiteName}"></TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        <Grid Grid.Column="1" Margin="5" Background="LightGoldenrodYellow">
+            <TabControl SelectionChanged="TabControl_SelectionChanged" Name="MainTabControl">
+                <TabItem Header="Інформація про Акаунт">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.7*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition Height="4*"/>
+                        </Grid.RowDefinitions>
+                        <Border Background="AliceBlue">
+                            <Viewbox>
+                            <TextBlock Margin="5" Text="Назва сайту" />
+                        </Viewbox>
+                        </Border>
+                        <Border Grid.Row="1" Background="PaleGreen">
+                            <Viewbox>
+                                <TextBlock Margin="5" Text="Адреса сайту"/>
+                            </Viewbox>
+                        </Border>
+                        <Border Grid.Row="2" Background="LightPink">
+                            <Viewbox Grid.Row="2">
+                            <TextBlock Margin="5" Text="Логін"/>
+                        </Viewbox>
+                        </Border>
+                        <Border Grid.Row="3" Background="LightSkyBlue">
+                            <Viewbox Grid.Row="3">
+                            <TextBlock Margin="5" Text="Пароль"/>
+                        </Viewbox>
+                        </Border>
+                        <Border Grid.Row="4" Grid.ColumnSpan="2" Background="LightYellow">
+                        <Viewbox >
+                            <TextBlock Margin="5" Text="Опис сайту"/>
+                        </Viewbox>
+                        </Border>
+                        <Border Grid.Row="5" Grid.ColumnSpan="2" Background="LightYellow">
+                        <ScrollViewer Grid.Row="5" Grid.ColumnSpan="2" Margin="5">
+                                <TextBlock Margin="5" Name="InfoSiteDescription" Text="{Binding SelectedAccount.SiteDescription, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" TextWrapping="Wrap"/>
+                        </ScrollViewer >
+                        </Border>
+                        <Border Grid.Column="1" Background="AliceBlue">
+                            <Viewbox >
+                                <TextBlock Margin="5" Name="InfoSiteName" Text="{Binding SelectedAccount.SiteName, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"/>
+                            </Viewbox>
+                        </Border>
+                        <Border Grid.Column="1" Grid.Row="1" Background="PaleGreen">
+                            <Viewbox >
+                                <TextBlock Margin="5" Name="InfoSiteAddress" Text="{Binding SelectedAccount.SiteAddress, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"/>
+                            </Viewbox>
+                        </Border>
+                        <Border Grid.Column="1" Grid.Row="2" Background="LightPink">
+                            <Viewbox Grid.Column="1" Grid.Row="2">
+                                <TextBlock Margin="5" Name="InfoSiteLogin" Text="{Binding SelectedAccount.Login, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"/>
+                            </Viewbox>
+                        </Border>
+                        <Border Grid.Column="1" Grid.Row="3" Background="LightSkyBlue">
+                            <ScrollViewer>
+                                <TextBlock Margin="5" Grid.Column="1" Grid.Row="3" Name="InfoSitePassword" FontSize="20" TextWrapping="Wrap" Text="{Binding SelectedAccount.Password, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"/>
+                            </ScrollViewer>
+                        </Border>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Додати Акаунт">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.7*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition Height="3*"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Viewbox>
+                            <TextBlock Margin="5" Text="Назва сайту" />
+                        </Viewbox>
+                        <Viewbox Grid.Row="1">
+                            <TextBlock Margin="5" Text="Адреса сайту"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="2">
+                            <TextBlock Margin="5" Text="Логін"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="3">
+                            <TextBlock Margin="5" Text="Пароль"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="4" Grid.ColumnSpan="2">
+                            <TextBlock Margin="5" Text="Опис сайту"/>
+                        </Viewbox>
+                        <ScrollViewer Grid.Row="5" Grid.ColumnSpan="2" Margin="5">
+                            <TextBox Margin="5" Name="AddSiteDescription" Background="Transparent" FontSize="20" Text="{Binding AddAccDescription, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" TextWrapping="Wrap"/>
+                        </ScrollViewer >
+
+
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Name="AddSiteName" Text="{Binding AddAccName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="1" Name="AddSiteAddress" Text="{Binding AddAccAddress, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="2" Name="AddSiteLogin" Text="{Binding AddAccLogin, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="3" Name="AddSitePassword" Text="{Binding AddAccPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
+
+                        <Button Margin="5" Grid.Row="6" Grid.ColumnSpan="2" Content="Додати акаунт" 
+                                FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}"
+                                Command="{Binding AddAccountCommand}"/>
+                       
+                        
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Редагувати / Видалити Акаунт" Name="TabUpdDelAcc">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.7*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition Height="3*"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Viewbox>
+                            <TextBlock Margin="5" Text="Назва сайту" />
+                        </Viewbox>
+                        <Viewbox Grid.Row="1">
+                            <TextBlock Margin="5" Text="Адреса сайту"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="2">
+                            <TextBlock Margin="5" Text="Логін"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="3">
+                            <TextBlock Margin="5" Text="Пароль"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="4" Grid.ColumnSpan="2">
+                            <TextBlock Margin="5" Text="Опис сайту"/>
+                        </Viewbox>
+                        <ScrollViewer Grid.Row="5" Grid.ColumnSpan="2" Margin="5">
+                            <TextBox Margin="5" Name="UpdSiteDescription" Background="Transparent" Text="{Binding UpdAccDescription}" FontSize="20" TextWrapping="Wrap"/>
+                        </ScrollViewer >
+
+
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Name="UpdSiteName" Text="{Binding UpdAccName}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="1" Name="UpdSiteAddress" Text="{Binding UpdAccAddress}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="2" Name="UpdSiteLogin" Text="{Binding UpdAccLogin}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="3" Name="UpdSitePassword" Text="{Binding UpdAccPassword}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
+
+                        <Grid Grid.Row="6" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Button Margin="5" Content="Редагувати акаунт" 
+                                    FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}"
+                                    Command="{Binding UpdAccountCommand}"/>
+                            <Button Margin="5" Grid.Column="1" Content="Видалити акаунт" 
+                                    FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" 
+                                    Click="Button_Click"/>
+                        </Grid>
+                        
+
+
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Статистика" Name="TabStatistics">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition Height="0.5*"/>
+                            <RowDefinition />
+                            <RowDefinition Height="0.5*"/>
+                            
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Viewbox>
+                            <TextBlock Margin="5" Text="Статистика логінів" TextWrapping="Wrap"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="1">
+                            <TextBlock Margin="5" Text="Статистика паролів" TextWrapping="Wrap"/>
+                        </Viewbox>
+                        <Border Background="LightSteelBlue" Grid.Row="3">
+                            <Viewbox >
+                            <TextBlock Margin="5" Text="Статистика логінів і паролів" TextWrapping="Wrap"/>
+                        </Viewbox>
+                        </Border>
+                        
+                        <!--<Viewbox Grid.Row="3">
+                            <TextBlock Margin="5" Text="Найчастіше використаний логін"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="4">
+                            <TextBlock Margin="5" Text="Найчастіше використаний пароль"/>
+                        </Viewbox>-->
+
+                        <ListView Grid.Column="1" Margin="5"  
+                                  VerticalContentAlignment="Center"
+                                  ItemsSource="{Binding Login_Stat}"
+                                  Name="Login_Stat_Combobox">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Focusable="False">
+                                        <TextBlock Text="{Binding Key}"></TextBlock>
+                                        <TextBlock Text=" : "></TextBlock>
+                                        <TextBlock Text="{Binding Value}"></TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                        <ListView Grid.Column="1" Grid.Row="1" Margin="5"  
+                                  VerticalContentAlignment="Center"
+                                  ItemsSource="{Binding Password_Stat}"
+                                  Name="Password_Stat_Combobox"
+                                  >
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Key}"></TextBlock>
+                                        <TextBlock Text=" : "></TextBlock>
+                                        <TextBlock Text="{Binding Value}"></TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <Border Grid.Column="1" Grid.Row="3" Background="LightSteelBlue">
+                            <ListView  Margin="5"  
+                                       VerticalContentAlignment="Center"
+                                       ItemsSource="{Binding Login_Password_Stat}"
+                                       Name="Login_Password_Stat_Combobox">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Логін : "></TextBlock>
+                                                <TextBlock Text="{Binding Key[0]}"></TextBlock>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Пароль : "></TextBlock>
+                                            <TextBlock Text="{Binding Key[1]}"></TextBlock>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Кількість : "></TextBlock>
+                                            <TextBlock Text="{Binding Value}"></TextBlock>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        </Border>
+                        
+
+                        <Button Margin="5" Grid.Row="2"  FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"
+                                Command="{Binding SortBySimpleKeyCommand}">
+                            <TextBlock Text="Сортувати за логіном/паролем" TextWrapping="Wrap"></TextBlock>
+                        </Button>
+                        <Button Margin="5" Grid.Row="2" Grid.Column="1" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"
+                                Command="{Binding SortBySimpleValueCommand}">
+                            <TextBlock Text="Сортувати за частотою" TextWrapping="Wrap"></TextBlock>
+                        </Button>
+                        <Grid Grid.Row="4" Grid.ColumnSpan="2" Background="LightSteelBlue">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Button Margin="5" Grid.Column="0"  FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"
+                                    Command="{Binding SortByDiffLoginCommand}">
+                                <TextBlock Text="Сортувати за логіном" TextWrapping="Wrap"></TextBlock>
+                            </Button>
+                            <Button Margin="5" Grid.Column="1"  FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"
+                                     Command="{Binding SortByDiffPasswordCommand}">
+                                <TextBlock Text="Сортувати за паролем" TextWrapping="Wrap"></TextBlock>
+                            </Button>
+                            <Button Margin="5" Grid.Column="2"  FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"
+                                     Command="{Binding SortByDiffQuantCommand}">
+                                <TextBlock Text="Сортувати за частотою" TextWrapping="Wrap"></TextBlock>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Шифрування">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.5*"/>
+                            <RowDefinition Height="0.5*"/>
+                            <RowDefinition Height="0.5*"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+
+                        <TextBlock Margin="5" Text="Поточний пароль акаунту" TextWrapping="Wrap" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"/>
+                        <TextBlock Margin="5" Grid.Column="1" TextWrapping="WrapWithOverflow" FontSize="20"
+                                   Text="{Binding SelectedAccount.Password}"></TextBlock>
+                        <TextBox Margin="5" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}"
+                                 Text="{Binding SecretKey,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"></TextBox>
+                        <Viewbox Grid.Row="1">
+                            <TextBlock Margin="5" Text="Ключ шифрування" TextWrapping="Wrap"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="2" Grid.ColumnSpan="2">
+                            <Button Margin="5" Content="Зашифрувати" Click="Crypt_Click_1"/>
+                        </Viewbox>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Grid>
+</Window>
