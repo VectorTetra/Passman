@@ -1,9 +1,6 @@
 ﻿using Kurs_Passman.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kurs_Passman.ViewModels
 {
@@ -74,13 +71,13 @@ namespace Kurs_Passman.ViewModels
             }
         }
 
-        public static void Save(string path,ref List<AccountViewModel> accountList)
+        public static void Save(string path, ref List<AccountViewModel> accountList)
         {
             List<Account> lp = new List<Account>();
             lp = accountList.Select(x => x.account).ToList();
             Account.Save(path, lp);
         }
-        public static void Load(string path,ref ICollection<AccountViewModel> accountList)
+        public static void Load(string path, ref ICollection<AccountViewModel> accountList)
         {
             List<Account> lp = new List<Account>();
             Account.Load(path, out lp);
@@ -89,7 +86,7 @@ namespace Kurs_Passman.ViewModels
                 accountList.Add(new AccountViewModel(item));
             }
         }
-        public void Crypt(string secretKey) 
+        public void Crypt(string secretKey)
         {
             this.account.Crypt(secretKey);
         }

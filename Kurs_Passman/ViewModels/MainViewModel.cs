@@ -1,16 +1,11 @@
 ﻿//using JB.Collections.Reactive;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 using System.Windows.Input;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Windows.Media;
 
 namespace Kurs_Passman.ViewModels
 {
@@ -36,8 +31,11 @@ namespace Kurs_Passman.ViewModels
         public AccountViewModel SelectedAccount
         {
             get { return _selectedAccount; }
-            set { _selectedAccount = value;
-                OnPropertyChanged(nameof(SelectedAccount)); }
+            set
+            {
+                _selectedAccount = value;
+                OnPropertyChanged(nameof(SelectedAccount));
+            }
         }
         #endregion SelectedAccount
         // SearchedAccounts - список всіх акаунтів, які задовольняють критерії пошуку
@@ -65,7 +63,9 @@ namespace Kurs_Passman.ViewModels
         public Dictionary<string, int> Login_Stat
         {
             get { return _login_stat; }
-            set { _login_stat = value;
+            set
+            {
+                _login_stat = value;
                 OnPropertyChanged(nameof(Login_Stat));
             }
         }
@@ -109,7 +109,9 @@ namespace Kurs_Passman.ViewModels
         public bool IsSearchByLogin
         {
             get { return _IsSearchByLogin; }
-            set { _IsSearchByLogin = value;
+            set
+            {
+                _IsSearchByLogin = value;
                 OnPropertyChanged(nameof(IsSearchByLogin));
             }
         }
@@ -347,14 +349,14 @@ namespace Kurs_Passman.ViewModels
             {
                 SearchedAccounts = Accounts;
             }
-            
+
         }
         public void CanAdd_Account(object sender, CanExecuteRoutedEventArgs e)
         {
             // Вказання опису сайту не є обов'язковим
-            e.CanExecute = (AddAccAddress.Length > 0 && 
-                            AddAccLogin.Length > 0 && 
-                            AddAccName.Length > 0 && 
+            e.CanExecute = (AddAccAddress.Length > 0 &&
+                            AddAccLogin.Length > 0 &&
+                            AddAccName.Length > 0 &&
                             AddAccPassword.Length > 0);
         }
         #endregion Command_AddAccount
@@ -374,7 +376,7 @@ namespace Kurs_Passman.ViewModels
         }
         public void Search_Accounts(object sender, ExecutedRoutedEventArgs e)
         {
-            if(SearchingExpression == string.Empty)
+            if (SearchingExpression == string.Empty)
             {
                 SearchedAccounts = Accounts;
             }
@@ -386,7 +388,7 @@ namespace Kurs_Passman.ViewModels
                 {
                     foreach (var item in Accounts)
                     {
-                        if (regex.IsMatch(item.Login) && !SearchedAccounts.Contains(item)) 
+                        if (regex.IsMatch(item.Login) && !SearchedAccounts.Contains(item))
                         { SearchedAccounts.Add(item); }
                     }
                 }
@@ -394,7 +396,7 @@ namespace Kurs_Passman.ViewModels
                 {
                     foreach (var item in Accounts)
                     {
-                        if (regex.IsMatch(item.SiteAddress) && !SearchedAccounts.Contains(item)) 
+                        if (regex.IsMatch(item.SiteAddress) && !SearchedAccounts.Contains(item))
                         { SearchedAccounts.Add(item); }
                     }
                 }
@@ -414,7 +416,7 @@ namespace Kurs_Passman.ViewModels
                         { SearchedAccounts.Add(item); }
                     }
                 }
-                if(!IsSearchByLogin && !IsSearchBySiteAddress && !IsSearchBySiteDescription && !IsSearchBySiteName)
+                if (!IsSearchByLogin && !IsSearchBySiteAddress && !IsSearchBySiteDescription && !IsSearchBySiteName)
                 {
                     foreach (var item in Accounts)
                     {
@@ -447,15 +449,15 @@ namespace Kurs_Passman.ViewModels
         {
             SelectedAccount.SiteName = UpdAccName.ToString();
             SelectedAccount.SiteAddress = UpdAccAddress.ToString();
-            if(SelectedAccount.Password != UpdAccPassword.ToString()) { SelectedAccount.IsEncrypted = false; }
+            if (SelectedAccount.Password != UpdAccPassword.ToString()) { SelectedAccount.IsEncrypted = false; }
             SelectedAccount.Password = UpdAccPassword.ToString();
             SelectedAccount.Login = UpdAccLogin.ToString();
             SelectedAccount.SiteDescription = UpdAccDescription.ToString();
-            
+
         }
         public void CanUpd_Account(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = SelectedAccount!= null;
+            e.CanExecute = SelectedAccount != null;
         }
         #endregion Command_UpdAccount
 
@@ -474,8 +476,8 @@ namespace Kurs_Passman.ViewModels
         }
         public void SortBySimpleKey(object sender, ExecutedRoutedEventArgs e)
         {
-           
-            if(IsOrderAscending) 
+
+            if (IsOrderAscending)
             {
                 Login_Stat = Login_Stat.OrderBy(pair => pair.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
                 Password_Stat = Password_Stat.OrderBy(pair => pair.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -657,7 +659,7 @@ namespace Kurs_Passman.ViewModels
                     Password_Stat[item.Password] += 1;
                 }
                 //new List(item.Login, item.Password).SequenceEqual
-                    List<string> pair = new List<string>() { item.Login, item.Password };
+                List<string> pair = new List<string>() { item.Login, item.Password };
                 // Якщо немає акаунтів з такими логіном і паролем - додати, якщо є - збільшити лічильник на 1
                 if (!Login_Password_Stat.Keys.Any(key => key.SequenceEqual(pair)))
                 {
@@ -665,7 +667,7 @@ namespace Kurs_Passman.ViewModels
                 }
                 else
                 {
-                    Parallel.ForEach(Login_Password_Stat.Keys, (kk) => { if (kk.SequenceEqual(pair)) { Login_Password_Stat[kk] += 1; } });                 
+                    Parallel.ForEach(Login_Password_Stat.Keys, (kk) => { if (kk.SequenceEqual(pair)) { Login_Password_Stat[kk] += 1; } });
                 }
             }
             var ls = Login_Stat;
@@ -696,7 +698,7 @@ namespace Kurs_Passman.ViewModels
         {
             this.Accounts.Remove(SelectedAccount);
             this.SearchedAccounts.Remove(SelectedAccount);
-            
+
             if (Accounts.Count > 0)
             {
                 this.SelectedAccount = Accounts[0];
@@ -713,13 +715,13 @@ namespace Kurs_Passman.ViewModels
 
         }
         // Збереження данних відбувається автоматично через callback під час закриття головного вікна застосунку
-        public void SaveData(string path) 
+        public void SaveData(string path)
         {
             var list = this.Accounts.ToList();
-            AccountViewModel.Save(path,ref list);
+            AccountViewModel.Save(path, ref list);
         }
         // Завантаження данних відбувається автоматично через callback під час відкриття головного вікна застосунку
-        public void LoadData(string path) 
+        public void LoadData(string path)
         {
             ICollection<AccountViewModel> list = new List<AccountViewModel>();
             AccountViewModel.Load(path, ref list);
@@ -727,7 +729,7 @@ namespace Kurs_Passman.ViewModels
             this.SearchedAccounts = new ObservableCollection<AccountViewModel>(list);
         }
         // Шифрування паролю відбувається автоматично через callback у обробнику події натискання на кнопку із підтвердженням
-        public void CryptPassword() 
+        public void CryptPassword()
         {
             SelectedAccount.Crypt(SecretKey);
             // Переприсвоєння для оновлення даних у текстбоксах

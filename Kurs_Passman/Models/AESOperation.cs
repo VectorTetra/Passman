@@ -1,38 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Kurs_Passman.Models
 {
     public class AesOperation
     {
         //генератор повторів пароля, в будь-якому випадку повертає 16-символьний ключ
-        //private static string GetRepeatKey(string s, int n)
-        //{
-        //    if (s.Length > 16)
-        //    {
-        //        s = s.Substring(0, 16);
-        //    }
-        //    var r = s;
-        //    while (r.Length < n)
-        //    {
-        //        r += r;
-        //    }
+        private static string GetRepeatKey(string s, int n)
+        {
+            if (s.Length > 16)
+            {
+                s = s.Substring(0, 16);
+            }
+            var r = s;
+            while (r.Length < n)
+            {
+                r += r;
+            }
 
-        //    return r.Substring(0, n);
-        //}
+            return r.Substring(0, n);
+        }
 
 
         public static string EncryptString(string key, string plainText)
         {
             byte[] iv = new byte[16];
             byte[] array;
-            //key = GetRepeatKey(key, 16);
+            key = GetRepeatKey(key, 16);
             using (Aes aes = Aes.Create())
             {
                 aes.KeySize = 256;
@@ -61,7 +57,7 @@ namespace Kurs_Passman.Models
         {
             byte[] iv = new byte[16];
             byte[] buffer = Convert.FromBase64String(cipherText);
-            //key = GetRepeatKey(key, 16);
+            key = GetRepeatKey(key, 16);
             using (Aes aes = Aes.Create())
             {
                 aes.KeySize = 256;

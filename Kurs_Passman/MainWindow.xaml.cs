@@ -1,18 +1,7 @@
 ﻿using Kurs_Passman.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Kurs_Passman
 {
@@ -41,7 +30,8 @@ namespace Kurs_Passman
         // Виникає під час зміни вкладки
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (TabStatistics.IsSelected) { 
+            if (TabStatistics.IsSelected)
+            {
                 mvmod.UpdateStatistics();
             }
             if (TabUpdDelAcc.IsSelected) mvmod?.LoadSelectedAccountForUpdate();

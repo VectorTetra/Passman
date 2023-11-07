@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Kurs_Passman.Models
+﻿namespace Kurs_Passman.Models
 {
     // Цей клас використовується для шифрування/дешифрування паролів із вказаним ключем
     // Оскільки методи цього класу є статичними, створювати об'єкт класу не потрібно
