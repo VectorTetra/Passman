@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-
+using System.Windows;
+using Microsoft.Data.Sqlite;
 namespace Kurs_Passman.Models
 {
     [Serializable]
@@ -18,7 +19,7 @@ namespace Kurs_Passman.Models
         [DataMember]
         public string SiteName { get; set; }                // Назва сайту
         [DataMember]
-        public string SiteDescription { get; set; }         // Опис сайту
+        public string? SiteDescription { get; set; }        // Опис сайту
         [DataMember]
         public string Login { get; set; }                   // Логін акаунту на сайті
         [DataMember]
@@ -46,7 +47,7 @@ namespace Kurs_Passman.Models
             }
 
             fstr.Close();
-
+            
         }
         // статичний метод запису масиву акаунтів у файл шляхом серіалізації
         public static void Save(string path, List<Account> accountList)
@@ -61,6 +62,8 @@ namespace Kurs_Passman.Models
                 //item.Crypt("ioP7PtH7R3zuq7A");
                 //item.Password = Encoding.UTF32.GetString( Encoding.Convert(Encoding.Unicode, Encoding.UTF32, Encoding.Unicode.GetBytes(item.Password)));
             }
+           
+
             DataContractJsonSerializer jsser = new DataContractJsonSerializer(typeof(List<Account>));
             FileStream fstr = new FileStream(path, FileMode.OpenOrCreate);
             jsser.WriteObject(fstr, accountList);

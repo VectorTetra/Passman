@@ -27,11 +27,6 @@ namespace Kurs_Passman
             this.CommandBindings.Add(new CommandBinding(mvmod.AddAccountCommand, mvmod.Add_Account, mvmod.CanAdd_Account));
             this.CommandBindings.Add(new CommandBinding(mvmod.SearchAccountsCommand, mvmod.Search_Accounts, mvmod.CanSearch_Accounts));
             this.CommandBindings.Add(new CommandBinding(mvmod.UpdAccountCommand, mvmod.Upd_Account, mvmod.CanUpd_Account));
-            this.CommandBindings.Add(new CommandBinding(mvmod.SortBySimpleKeyCommand, mvmod.SortBySimpleKey, mvmod.CanSortBySimpleKey));
-            this.CommandBindings.Add(new CommandBinding(mvmod.SortBySimpleValueCommand, mvmod.SortBySimpleValue, mvmod.CanSortBySimpleValue));
-            this.CommandBindings.Add(new CommandBinding(mvmod.SortByDiffLoginCommand, mvmod.SortByDiffLogin, mvmod.CanSortByDiffLogin));
-            this.CommandBindings.Add(new CommandBinding(mvmod.SortByDiffPasswordCommand, mvmod.SortByDiffPassword, mvmod.CanSortByDiffPassword));
-            this.CommandBindings.Add(new CommandBinding(mvmod.SortByDiffQuantCommand, mvmod.SortByDiffQuant, mvmod.CanSortByDiffQuant));
 
             // Заборонити вставку у поле перегляду пароля на сторінці "Інформація"
             InfoSitePassword.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, e) => { }));

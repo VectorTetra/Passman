@@ -41,7 +41,7 @@ namespace Kurs_Passman.ViewModels
             }
         }
 
-        public string SiteDescription
+        public string? SiteDescription
         {
             get { return account.SiteDescription; }
             set
