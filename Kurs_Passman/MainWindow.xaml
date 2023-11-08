@@ -7,9 +7,7 @@
         xmlns:mod="clr-namespace:Kurs_Passman.ViewModels"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="PassMan" MinHeight="530" MinWidth="910" 
-        Loaded="Window_Loaded" 
-        Closing="Window_Closing" 
+        Title="PassMan" MinHeight="530" MinWidth="910"  
         Name="PassManWindow"
          TextElement.Foreground="{DynamicResource MaterialDesignBody}"
          TextElement.FontWeight="Regular"
@@ -376,7 +374,7 @@
                                     Command="{Binding UpdAccountCommand}"/>
                             <Button Margin="5" Grid.Column="1" Content="Видалити акаунт" 
                                     FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" 
-                                    Click="Button_Click"/>
+                                    Command="{Binding DelAccountCommand}"/>
                         </Grid>
 
 

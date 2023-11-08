@@ -12,17 +12,18 @@ namespace Kurs_Passman.Models
     // Клас Account - зберігає інформацію про сайт та його акаунт з логіном та паролем
     public class Account
     {
-        [DataMember]
-        public bool Encrypted = false;                     // Демонструє, чи зашифрований пароль
-        [DataMember]
+        public int Id { get; set; }
+        
+        public int Encrypted { get; set; } = 0;                     // Демонструє, чи зашифрований пароль
+        
         public string SiteAddress { get; set; }             // Адреса сайту
-        [DataMember]
+        
         public string SiteName { get; set; }                // Назва сайту
-        [DataMember]
+       
         public string? SiteDescription { get; set; }        // Опис сайту
-        [DataMember]
+       
         public string Login { get; set; }                   // Логін акаунту на сайті
-        [DataMember]
+       
         public string Password { get; set; }                // Пароль акаунту на сайті
 
         // статичний метод завантаження масиву акаунтів із файлу шляхом десеріалізації
@@ -38,7 +39,7 @@ namespace Kurs_Passman.Models
                 {
                     //item.Password = Encoding.Unicode.GetString(Encoding.Convert(Encoding.UTF32, Encoding.Unicode, Encoding.UTF32.GetBytes(item.Password)));
                     //item.Crypt("ioP7PtH7R3zuq7A");
-                    if (!item.Encrypted)
+                    if (item.Encrypted == 0)
                     {
                         item.Password = AesOperation.DecryptString("vJIE9TwyIZcy8nbYTm7J9fHCqFvRL1fa", item.Password);
                     }
@@ -54,7 +55,7 @@ namespace Kurs_Passman.Models
         {
             foreach (var item in accountList)
             {
-                if (!item.Encrypted)
+                if (item.Encrypted == 0)
                 {
                     item.Password = AesOperation.EncryptString("vJIE9TwyIZcy8nbYTm7J9fHCqFvRL1fa", item.Password);
                 }
@@ -73,15 +74,15 @@ namespace Kurs_Passman.Models
         // використовується у методах Save / Load , а також під час шифрування паролю за бажанням користувача
         public void Crypt(string secretKey)
         {
-            if (Encrypted)
+            if (Encrypted == 1)
             {
                 Password = AesOperation.DecryptString(secretKey, Password);
-                Encrypted = !Encrypted;
+                Encrypted = 0;
             }
             else
             {
                 Password = AesOperation.EncryptString(secretKey, Password);
-                Encrypted = !Encrypted;
+                Encrypted = 1;
             }
 
         }

@@ -24,9 +24,6 @@ namespace Kurs_Passman
             MainViewModel mvmod = this.Resources["mvmod"] as MainViewModel;
             this.DataContext = mvmod;
             this.mvmod = mvmod;
-            //this.CommandBindings.Add(new CommandBinding(mvmod?.AddAccountCommand));
-            //this.CommandBindings.Add(new CommandBinding(mvmod.SearchAccountsCommand, mvmod.Search_Accounts, mvmod.CanSearch_Accounts));
-            //this.CommandBindings.Add(new CommandBinding(mvmod.UpdAccountCommand, mvmod.Upd_Account, mvmod.CanUpd_Account));
 
             // Заборонити вставку у поле перегляду пароля на сторінці "Інформація"
             InfoSitePassword.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, e) => { }));
@@ -87,16 +84,6 @@ namespace Kurs_Passman
                 TabStatistics.IsEnabled = false;
                 MainTabControl.SelectedIndex = 1;
             }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            mvmod?.LoadData("accounts.json");
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            mvmod?.SaveData("accounts.json");
         }
 
         // Заборонити введення пароля на сторінці "Інформація"

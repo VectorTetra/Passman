@@ -10,13 +10,25 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Kurs_Passman.Commands;
+using Microsoft.EntityFrameworkCore;
+using System.Windows.Documents;
+
 namespace Kurs_Passman.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        public MainViewModel()
+        {
+            db = new();
+            db.Database.EnsureCreated();
+            db.Accounts.Load();
+            this.Accounts = db.Accounts.Local.ToObservableCollection();
+            this.SearchedAccounts = db.Accounts.Local.ToObservableCollection();
+        }
+        PassManContext db;
         // Accounts - повна колекція всіх акаунтів
         #region Accounts
-        private ObservableCollection<Account> _accounts = new ObservableCollection<Account>();
+        private ObservableCollection<Account> _accounts;
         public ObservableCollection<Account> Accounts
         {
             get { return _accounts; }
@@ -43,7 +55,7 @@ namespace Kurs_Passman.ViewModels
         #endregion SelectedAccount
         // SearchedAccounts - список всіх акаунтів, які задовольняють критерії пошуку
         #region SearchedAccounts
-        private ObservableCollection<Account> _searchedaccounts = new ObservableCollection<Account>();
+        private ObservableCollection<Account> _searchedaccounts;
         public ObservableCollection<Account> SearchedAccounts
         {
             get { return _searchedaccounts; }
@@ -342,7 +354,8 @@ namespace Kurs_Passman.ViewModels
         }
         public void Add_Account()
         {
-            this.Accounts.Add(new Models.Account { Login = AddAccLogin, SiteName = AddAccName, SiteAddress = AddAccAddress, Password = AddAccPassword, SiteDescription = AddAccDescription });
+            db.Accounts.Add(new Account { Login = AddAccLogin, SiteName = AddAccName, SiteAddress = AddAccAddress, Password = AddAccPassword, SiteDescription = AddAccDescription });
+            db.SaveChangesAsync();
             AddAccAddress = string.Empty;
             AddAccLogin = string.Empty;
             AddAccDescription = string.Empty;
@@ -448,15 +461,40 @@ namespace Kurs_Passman.ViewModels
         {
             SelectedAccount.SiteName = UpdAccName.ToString();
             SelectedAccount.SiteAddress = UpdAccAddress.ToString();
-            if (SelectedAccount.Password != UpdAccPassword.ToString()) { SelectedAccount.Encrypted = false; }
+            if (SelectedAccount.Password != UpdAccPassword.ToString()) { SelectedAccount.Encrypted = 0; }
             SelectedAccount.Password = UpdAccPassword.ToString();
             SelectedAccount.Login = UpdAccLogin.ToString();
             SelectedAccount.SiteDescription = UpdAccDescription.ToString();
-
+            SelectedAccount = SelectedAccount;
+            db.Entry(SelectedAccount).State = EntityState.Modified;
+            db.SaveChangesAsync();
         }
         public bool CanUpd_Account()
         {
             return SelectedAccount != null;
+        }
+        #endregion Command_UpdAccount
+
+        #region Command_DelAccount
+        private DelegateCommand del_account_command = null;
+        public ICommand DelAccountCommand
+        {
+            get
+            {
+                if (upd_account_command == null)
+                {
+                    upd_account_command = new DelegateCommand(d => Del_Account(),
+                        d => {
+                        return SelectedAccount != null;
+                    });
+                }
+                return upd_account_command;
+            }
+        }
+        public void Del_Account()
+        {
+            db.Accounts.Remove(SelectedAccount);
+            db.SaveChangesAsync();
         }
         #endregion Command_UpdAccount
         #endregion Commands
@@ -525,8 +563,8 @@ namespace Kurs_Passman.ViewModels
         // Видалення акаунту у вкладці "Оновлення акаунту" відбувається через callback у обробнику події натискання на кнопку із підтвердженням
         public void DeleteSelectedAccount()
         {
-            this.Accounts.Remove(SelectedAccount);
-            this.SearchedAccounts.Remove(SelectedAccount);
+            db.Accounts.Remove(SelectedAccount);
+            db.SaveChanges();
 
             if (Accounts.Count > 0)
             {
@@ -565,6 +603,8 @@ namespace Kurs_Passman.ViewModels
             //var sel = SelectedAccount;
             //SelectedAccount = Accounts[0];
             //SelectedAccount = sel;
+            db.Entry(SelectedAccount).State = EntityState.Modified;
+            db.SaveChangesAsync();
             SelectedAccount = SelectedAccount;
             SecretKey = "";
         }
