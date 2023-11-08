@@ -1,8 +1,11 @@
 ﻿//using JB.Collections.Reactive;
+using Kurs_Passman.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -635,6 +638,10 @@ namespace Kurs_Passman.ViewModels
         // Оновлення даних у вкладці "Статистика" відбувається через callback у обробнику події зміни вкладки
         public void UpdateStatistics()
         {
+            // Створюємо новий криптографічний об'єкт симетричного шифрування.
+            // Він необхідний, щоб отримати випадково згенерований ключ шифрування
+            var cipherKey = AesOperation.GetRandomString();
+            string crypted_pass = string.Empty;
             Login_Stat.Clear();
             Password_Stat.Clear();
             Login_Password_Stat.Clear();
@@ -650,16 +657,17 @@ namespace Kurs_Passman.ViewModels
                     Login_Stat[item.Login] += 1;
                 }
                 // Якщо немає акаунтів з таким паролем - додати, якщо є - збільшити лічильник на 1
-                if (!Password_Stat.ContainsKey(item.Password))
+                crypted_pass = AesOperation.EncryptString(cipherKey, item.Password);
+                if (!Password_Stat.ContainsKey(crypted_pass))
                 {
-                    Password_Stat.TryAdd(item.Password, 1);
+                    Password_Stat.TryAdd(crypted_pass, 1);
                 }
                 else
                 {
-                    Password_Stat[item.Password] += 1;
+                    Password_Stat[crypted_pass] += 1;
                 }
-                //new List(item.Login, item.Password).SequenceEqual
-                List<string> pair = new List<string>() { item.Login, item.Password };
+
+                List<string> pair = new List<string>() { item.Login, crypted_pass };
                 // Якщо немає акаунтів з такими логіном і паролем - додати, якщо є - збільшити лічильник на 1
                 if (!Login_Password_Stat.Keys.Any(key => key.SequenceEqual(pair)))
                 {

@@ -7,6 +7,24 @@ namespace Kurs_Passman.Models
 {
     public class AesOperation
     {
+        public static string GetRandomString(int length = 16)
+        {
+            // Створюємо масив символів, які ми будемо використовувати
+            char[] letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+-=".ToCharArray();
+
+            Random rand = new Random();
+            
+            string word = "";
+            for (int j = 1; j <= length; j++)
+            {
+                int letter_num = rand.Next(0, letters.Length - 1);
+                word += letters[letter_num];
+            }
+
+            // Добавьте слово в список.
+            return word;
+           
+        }
         //генератор повторів пароля, в будь-якому випадку повертає 16-символьний ключ
         private static string GetRepeatKey(string s, int n)
         {

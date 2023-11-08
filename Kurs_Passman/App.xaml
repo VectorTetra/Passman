@@ -16,6 +16,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
                 <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/TabControlTemplates.xaml" />-->
 
+                <ResourceDictionary Source="Resources/Templates and Styles/StylesMainDictionary.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

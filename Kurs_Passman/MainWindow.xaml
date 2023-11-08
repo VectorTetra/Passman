@@ -6,8 +6,6 @@
         xmlns:conv="clr-namespace:Kurs_Passman.Converters"
         xmlns:mod="clr-namespace:Kurs_Passman.ViewModels"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:colors="clr-namespace:MaterialDesignColors;assembly=MaterialDesignColors"
-        xmlns:local="clr-namespace:Kurs_Passman"
         mc:Ignorable="d"
         Title="PassMan" MinHeight="530" MinWidth="910" 
         Loaded="Window_Loaded" 
@@ -29,6 +27,7 @@
     <Window.Resources>
         <conv:HeightConverter x:Key="hconv"/>
         <mod:MainViewModel x:Key="mvmod"/>
+        
     </Window.Resources>
 
     <Grid Background="Bisque" DataContext="{StaticResource mvmod}">
@@ -355,9 +354,9 @@
                         </ScrollViewer >
 
 
-                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Name="UpdSiteName" Text="{Binding UpdAccName}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
-                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="1" Name="UpdSiteAddress" Text="{Binding UpdAccAddress}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
-                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="2" Name="UpdSiteLogin" Text="{Binding UpdAccLogin}" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}" VerticalContentAlignment="Center"/>
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Name="UpdSiteName" Text="{Binding UpdAccName}" FontSize="{Binding ElementName=PassManWindow,Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}" VerticalContentAlignment="Center"/>
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="1" Name="UpdSiteAddress" Text="{Binding UpdAccAddress}" FontSize="{Binding ElementName=PassManWindow,Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}" VerticalContentAlignment="Center"/>
+                        <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="2" Name="UpdSiteLogin" Text="{Binding UpdAccLogin}" FontSize="{Binding ElementName=PassManWindow,Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}" VerticalContentAlignment="Center"/>
                         <PasswordBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="3" 
                                  Style="{StaticResource ResourceKey=MaterialDesignRevealPasswordBox}" materialDesign:HintAssist.Hint="Введіть пароль до акаунту" 
                                  Name="UpdSitePassword" 
@@ -397,123 +396,53 @@
                             </StackPanel>
                         </Viewbox>
                     </TabItem.Header>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition Height="0.5*"/>
-                            <RowDefinition />
-                            <RowDefinition Height="0.5*"/>
-
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Viewbox>
-                            <TextBlock Margin="5" Text="Статистика логінів" TextWrapping="Wrap"/>
-                        </Viewbox>
-                        <Viewbox Grid.Row="1">
-                            <TextBlock Margin="5" Text="Статистика паролів" TextWrapping="Wrap"/>
-                        </Viewbox>
-                        <Border Background="LightSteelBlue" Grid.Row="3">
-                            <Viewbox >
-                                <TextBlock Margin="5" Text="Статистика логінів і паролів" TextWrapping="Wrap"/>
-                            </Viewbox>
-                        </Border>
-
-                        <!--<Viewbox Grid.Row="3">
-                            <TextBlock Margin="5" Text="Найчастіше використаний логін"/>
-                        </Viewbox>
-                        <Viewbox Grid.Row="4">
-                            <TextBlock Margin="5" Text="Найчастіше використаний пароль"/>
-                        </Viewbox>-->
-
-                        <ListView Grid.Column="1" Margin="5"  
-                                  VerticalContentAlignment="Center"
-                                  ItemsSource="{Binding Login_Stat}"
-                                  Name="Login_Stat_Combobox">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Focusable="False">
-                                        <TextBlock Text="{Binding Key}"></TextBlock>
-                                        <TextBlock Text=" : "></TextBlock>
-                                        <TextBlock Text="{Binding Value}"></TextBlock>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-
-                        <ListView Grid.Column="1" Grid.Row="1" Margin="5"  
-                                  VerticalContentAlignment="Center"
-                                  ItemsSource="{Binding Password_Stat}"
-                                  Name="Password_Stat_Combobox"
-                                  >
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Key}"></TextBlock>
-                                        <TextBlock Text=" : "></TextBlock>
-                                        <TextBlock Text="{Binding Value}"></TextBlock>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                        <Border Grid.Column="1" Grid.Row="3" Background="LightSteelBlue">
-                            <ListView  Margin="5"  
-                                       VerticalContentAlignment="Center"
-                                       ItemsSource="{Binding Login_Password_Stat}"
-                                       Name="Login_Password_Stat_Combobox">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="Логін : "></TextBlock>
-                                                <TextBlock Text="{Binding Key[0]}"></TextBlock>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="Пароль : "></TextBlock>
-                                                <TextBlock Text="{Binding Key[1]}"></TextBlock>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="Кількість : "></TextBlock>
-                                                <TextBlock Text="{Binding Value}"></TextBlock>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Border>
-
-
-                        <Button Margin="5" Grid.Row="2"  FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"
-                                Command="{Binding SortBySimpleKeyCommand}">
-                            <TextBlock Text="Сортувати за логіном/паролем" TextWrapping="Wrap"></TextBlock>
-                        </Button>
-                        <Button Margin="5" Grid.Row="2" Grid.Column="1" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"
-                                Command="{Binding SortBySimpleValueCommand}">
-                            <TextBlock Text="Сортувати за частотою" TextWrapping="Wrap"></TextBlock>
-                        </Button>
-                        <Grid Grid.Row="4" Grid.ColumnSpan="2" Background="LightSteelBlue">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Button Margin="5" Grid.Column="0"  FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"
-                                    Command="{Binding SortByDiffLoginCommand}">
-                                <TextBlock Text="Сортувати за логіном" TextWrapping="Wrap"></TextBlock>
-                            </Button>
-                            <Button Margin="5" Grid.Column="1"  FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"
-                                     Command="{Binding SortByDiffPasswordCommand}">
-                                <TextBlock Text="Сортувати за паролем" TextWrapping="Wrap"></TextBlock>
-                            </Button>
-                            <Button Margin="5" Grid.Column="2"  FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=3}"
-                                     Command="{Binding SortByDiffQuantCommand}">
-                                <TextBlock Text="Сортувати за частотою" TextWrapping="Wrap"></TextBlock>
-                            </Button>
-                        </Grid>
-                    </Grid>
+                    <TabControl>
+                        <TabItem Header="Статистика логінів">
+                            <DataGrid x:Name="DataGridLoginStat" ItemsSource="{Binding Login_Stat}"
+                                          AutoGenerateColumns="False"
+                                          GridLinesVisibility="All" HeadersVisibility="All"
+                                          Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue"
+                                          HorizontalScrollBarVisibility="Auto"  
+                                          VerticalScrollBarVisibility="Auto"
+                                          >
+                                <DataGrid.Columns >
+                                    <DataGridTextColumn Header="Логін" Binding="{Binding Key}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Кількість" Binding="{Binding Value}"></DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Статистика паролів">
+                            <DataGrid x:Name="DataGridPasswordStat" ItemsSource="{Binding Password_Stat}"
+                                          AutoGenerateColumns="False"
+                                          GridLinesVisibility="All" HeadersVisibility="All"
+                                          Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue"
+                                          HorizontalScrollBarVisibility="Auto"  
+                                          VerticalScrollBarVisibility="Auto"
+                                          RowStyle="{DynamicResource DataGridRowNonSelectable}"
+                                      >
+                                <DataGrid.Columns >
+                                    <materialDesign:DataGridTextColumn Header="Пароль" Binding="{Binding Key}"></materialDesign:DataGridTextColumn>
+                                    <materialDesign:DataGridTextColumn Header="Кількість" Binding="{Binding Value}"></materialDesign:DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Статистика логінів і паролів">
+                            <DataGrid x:Name="DataGridLoginPasswordStat" ItemsSource="{Binding Login_Password_Stat}"
+                                          AutoGenerateColumns="False"
+                                          GridLinesVisibility="All" HeadersVisibility="All"
+                                          Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue"
+                                          HorizontalScrollBarVisibility="Auto"  
+                                          VerticalScrollBarVisibility="Auto"
+                                          RowStyle="{DynamicResource DataGridRowNonSelectable}">
+                                <DataGrid.Columns >
+                                    <materialDesign:DataGridTextColumn Header="Логін" Binding="{Binding Key[0]}"></materialDesign:DataGridTextColumn>
+                                    <materialDesign:DataGridTextColumn Header="Пароль" Binding="{Binding Key[1]}" 
+                                                                       materialDesign:PasswordBoxAssist.IsPasswordRevealed="False"></materialDesign:DataGridTextColumn>
+                                    <materialDesign:DataGridTextColumn Header="Кількість" Binding="{Binding Value}"></materialDesign:DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                    </TabControl>
                 </TabItem>
                 <TabItem Name="TabEncrypt" IsEnabled="False">
                     <TabItem.Header>
@@ -546,7 +475,7 @@
                                    Text="{Binding SelectedAccount.Password}"></TextBlock>-->
                         <!--<TextBox Margin="5" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}"
                                  Text="{Binding SecretKey,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"></TextBox>-->
-                        
+
                         <PasswordBox Margin="5" Grid.Column="0" Grid.ColumnSpan="2" Background="Transparent" 
                                                  PreviewTextInput="InfoSitePassword_PreviewTextInput"
                                      Style="{StaticResource ResourceKey=MaterialDesignFloatingHintRevealPasswordBox}" 
