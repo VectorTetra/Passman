@@ -5,10 +5,23 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Resources\Passman_Icon.ico</ApplicationIcon>
+    <PackageIcon>Passman_Icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Resources\Passman_Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\Passman_Icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

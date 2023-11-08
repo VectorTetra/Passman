@@ -1,7 +1,10 @@
 ﻿using Kurs_Passman.ViewModels;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Kurs_Passman
 {
@@ -15,6 +18,9 @@ namespace Kurs_Passman
         {
             InitializeComponent();
             //mvmod = this.Resources["mvmod"] as MainViewModel;
+            Uri iconUri = new Uri("../../../Resources/Passman_Icon.ico", UriKind.RelativeOrAbsolute);
+            this.Icon = BitmapFrame.Create(iconUri);
+
             MainViewModel mvmod = this.Resources["mvmod"] as MainViewModel;
             this.DataContext = mvmod;
             this.mvmod = mvmod;
@@ -26,6 +32,12 @@ namespace Kurs_Passman
             this.CommandBindings.Add(new CommandBinding(mvmod.SortByDiffLoginCommand, mvmod.SortByDiffLogin, mvmod.CanSortByDiffLogin));
             this.CommandBindings.Add(new CommandBinding(mvmod.SortByDiffPasswordCommand, mvmod.SortByDiffPassword, mvmod.CanSortByDiffPassword));
             this.CommandBindings.Add(new CommandBinding(mvmod.SortByDiffQuantCommand, mvmod.SortByDiffQuant, mvmod.CanSortByDiffQuant));
+
+            // Заборонити вставку у поле перегляду пароля на сторінці "Інформація"
+            InfoSitePassword.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, e) => { }));
+            // Заборонити вставку у поле перегляду пароля на сторінці "Шифрування"
+            CryptSitePassword.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, e) => { }));
+            CryptSitePasswordSecretKey.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, e) => { }));
         }
         // Виникає під час зміни вкладки
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -66,6 +78,19 @@ namespace Kurs_Passman
             if (mvmod?.SelectedAccount != null)
             {
                 mvmod?.LoadSelectedAccountForUpdate();
+                //MainTabControl.Visibility = Visibility.Visible;
+                TabItemAccountInfo.IsEnabled = true;
+                TabUpdDelAcc.IsEnabled = true;
+                TabEncrypt.IsEnabled = true;
+                TabStatistics.IsEnabled = true;
+            }
+            else
+            {
+                TabItemAccountInfo.IsEnabled = false;
+                TabUpdDelAcc.IsEnabled = false;
+                TabEncrypt.IsEnabled = false;
+                TabStatistics.IsEnabled = false;
+                MainTabControl.SelectedIndex = 1;
             }
         }
 
@@ -78,5 +103,25 @@ namespace Kurs_Passman
         {
             mvmod?.SaveData("accounts.json");
         }
+
+        // Заборонити введення пароля на сторінці "Інформація"
+        private void InfoSitePassword_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = true;
+        }
+        //// Перевірка на відкриття контекстного меню при натисканні Mouse2(заборонити).
+        //private void InfoSitePassword_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        //{
+        //    e.Handled = true;
+        //}
+        //// Перевірка на використання комбінацій Ctrl+C, Ctrl+V (заборонити).
+        //private void InfoSitePassword_PreviewKeyUp(object sender, KeyEventArgs e)
+        //{
+        //    if (((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.V) 
+        //      ||((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.C))
+        //    {
+        //        e.Handled = true;
+        //    }
+        //}
     }
 }
