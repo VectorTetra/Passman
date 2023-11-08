@@ -16,8 +16,8 @@ namespace Kurs_Passman.ViewModels
     {
         // Accounts - повна колекція всіх акаунтів
         #region Accounts
-        private System.Collections.ObjectModel.ObservableCollection<AccountViewModel> _accounts = new System.Collections.ObjectModel.ObservableCollection<AccountViewModel>();
-        public System.Collections.ObjectModel.ObservableCollection<AccountViewModel> Accounts
+        private ObservableCollection<Account> _accounts = new ObservableCollection<Account>();
+        public ObservableCollection<Account> Accounts
         {
             get { return _accounts; }
             set
@@ -29,9 +29,9 @@ namespace Kurs_Passman.ViewModels
         #endregion Accounts
         // SelectedAccount - посилання на обраний акаунт в списку акаунтів 
         #region SelectedAccount
-        private AccountViewModel _selectedAccount = null;
+        private Account _selectedAccount = null;
 
-        public AccountViewModel SelectedAccount
+        public Account SelectedAccount
         {
             get { return _selectedAccount; }
             set
@@ -43,8 +43,8 @@ namespace Kurs_Passman.ViewModels
         #endregion SelectedAccount
         // SearchedAccounts - список всіх акаунтів, які задовольняють критерії пошуку
         #region SearchedAccounts
-        private ObservableCollection<AccountViewModel> _searchedaccounts = new ObservableCollection<AccountViewModel>();
-        public ObservableCollection<AccountViewModel> SearchedAccounts
+        private ObservableCollection<Account> _searchedaccounts = new ObservableCollection<Account>();
+        public ObservableCollection<Account> SearchedAccounts
         {
             get { return _searchedaccounts; }
             set
@@ -342,7 +342,7 @@ namespace Kurs_Passman.ViewModels
         }
         public void Add_Account(object sender, ExecutedRoutedEventArgs e)
         {
-            this.Accounts.Add(new AccountViewModel(new Models.Account { Login = AddAccLogin, SiteName = AddAccName, SiteAddress = AddAccAddress, Password = AddAccPassword, SiteDescription = AddAccDescription }));
+            this.Accounts.Add(new Models.Account { Login = AddAccLogin, SiteName = AddAccName, SiteAddress = AddAccAddress, Password = AddAccPassword, SiteDescription = AddAccDescription });
             AddAccAddress = string.Empty;
             AddAccLogin = string.Empty;
             AddAccDescription = string.Empty;
@@ -385,7 +385,7 @@ namespace Kurs_Passman.ViewModels
             }
             else
             {
-                SearchedAccounts = new ObservableCollection<AccountViewModel>();
+                SearchedAccounts = new ObservableCollection<Account>();
                 Regex regex = new Regex(SearchingExpression);
                 if (IsSearchByLogin)
                 {
@@ -452,7 +452,7 @@ namespace Kurs_Passman.ViewModels
         {
             SelectedAccount.SiteName = UpdAccName.ToString();
             SelectedAccount.SiteAddress = UpdAccAddress.ToString();
-            if (SelectedAccount.Password != UpdAccPassword.ToString()) { SelectedAccount.IsEncrypted = false; }
+            if (SelectedAccount.Password != UpdAccPassword.ToString()) { SelectedAccount.Encrypted = false; }
             SelectedAccount.Password = UpdAccPassword.ToString();
             SelectedAccount.Login = UpdAccLogin.ToString();
             SelectedAccount.SiteDescription = UpdAccDescription.ToString();
@@ -509,15 +509,6 @@ namespace Kurs_Passman.ViewModels
                     Parallel.ForEach(Login_Password_Stat.Keys, (kk) => { if (kk.SequenceEqual(pair)) { Login_Password_Stat[kk] += 1; } });
                 }
             }
-            var ls = Login_Stat;
-            Login_Stat = new();
-            Login_Stat = ls;
-            var ps = Password_Stat;
-            Password_Stat = new();
-            Password_Stat = ps;
-            var lps = Login_Password_Stat;
-            Login_Password_Stat = new();
-            Login_Password_Stat = lps;
         }
 
         // Оновлення даних у вкладці "Оновлення акаунту" відбувається через callback у обробнику події зміни вкладки
@@ -526,7 +517,7 @@ namespace Kurs_Passman.ViewModels
             if (SelectedAccount != null)
             {
                 UpdAccAddress = SelectedAccount.SiteAddress.ToString();
-                UpdAccDescription = SelectedAccount.SiteDescription.ToString();
+                UpdAccDescription = SelectedAccount?.SiteDescription.ToString();
                 UpdAccLogin = SelectedAccount.Login.ToString();
                 UpdAccName = SelectedAccount.SiteName.ToString();
                 UpdAccPassword = SelectedAccount.Password.ToString();
@@ -557,15 +548,15 @@ namespace Kurs_Passman.ViewModels
         public void SaveData(string path)
         {
             var list = this.Accounts.ToList();
-            AccountViewModel.Save(path, ref list);
+            Account.Save(path, list);
         }
         // Завантаження данних відбувається автоматично через callback під час відкриття головного вікна застосунку
         public void LoadData(string path)
         {
-            ICollection<AccountViewModel> list = new List<AccountViewModel>();
-            AccountViewModel.Load(path, ref list);
-            this.Accounts = new ObservableCollection<AccountViewModel>(list);
-            this.SearchedAccounts = new ObservableCollection<AccountViewModel>(list);
+            List<Account> list = new List<Account>();
+            Account.Load(path,out list);
+            this.Accounts = new ObservableCollection<Account>(list);
+            this.SearchedAccounts = new ObservableCollection<Account>(list);
         }
         // Шифрування паролю відбувається автоматично через callback у обробнику події натискання на кнопку із підтвердженням
         public void CryptPassword()
