@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
-
+using Kurs_Passman.Commands;
 namespace Kurs_Passman.ViewModels
 {
     public class MainViewModel : ViewModelBase
@@ -328,19 +328,19 @@ namespace Kurs_Passman.ViewModels
         #region Commands
 
         #region Command_AddAccount
-        private RoutedCommand add_account_command = null;
+        private DelegateCommand add_account_command = null;
         public ICommand AddAccountCommand
         {
             get
             {
                 if (add_account_command == null)
                 {
-                    add_account_command = new RoutedCommand("Add_Account", typeof(MainViewModel));
+                    add_account_command = new DelegateCommand(d => Add_Account(), d=> CanAdd_Account());
                 }
                 return add_account_command;
             }
         }
-        public void Add_Account(object sender, ExecutedRoutedEventArgs e)
+        public void Add_Account()
         {
             this.Accounts.Add(new Models.Account { Login = AddAccLogin, SiteName = AddAccName, SiteAddress = AddAccAddress, Password = AddAccPassword, SiteDescription = AddAccDescription });
             AddAccAddress = string.Empty;
@@ -354,10 +354,10 @@ namespace Kurs_Passman.ViewModels
             }
 
         }
-        public void CanAdd_Account(object sender, CanExecuteRoutedEventArgs e)
+        public bool CanAdd_Account()
         {
             // Вказання опису сайту не є обов'язковим
-            e.CanExecute = (AddAccAddress.Length > 0 &&
+           return (AddAccAddress.Length > 0 &&
                             AddAccLogin.Length > 0 &&
                             AddAccName.Length > 0 &&
                             AddAccPassword.Length > 0);
@@ -365,19 +365,19 @@ namespace Kurs_Passman.ViewModels
         #endregion Command_AddAccount
 
         #region Command_SearchAccounts
-        private RoutedCommand search_accounts_command = null;
+        private DelegateCommand search_accounts_command = null;
         public ICommand SearchAccountsCommand
         {
             get
             {
                 if (search_accounts_command == null)
                 {
-                    search_accounts_command = new RoutedCommand("Upd_Account", typeof(MainViewModel));
+                    search_accounts_command = new DelegateCommand(d => Search_Accounts(), null);
                 }
                 return search_accounts_command;
             }
         }
-        public void Search_Accounts(object sender, ExecutedRoutedEventArgs e)
+        public void Search_Accounts()
         {
             if (SearchingExpression == string.Empty)
             {
@@ -429,26 +429,22 @@ namespace Kurs_Passman.ViewModels
                 }
             }
         }
-        public void CanSearch_Accounts(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
-        }
         #endregion Command_SearchAccounts
 
         #region Command_UpdAccount
-        private RoutedCommand upd_account_command = null;
+        private DelegateCommand upd_account_command = null;
         public ICommand UpdAccountCommand
         {
             get
             {
                 if (upd_account_command == null)
                 {
-                    upd_account_command = new RoutedCommand("Upd_Account", typeof(MainViewModel));
+                    upd_account_command = new DelegateCommand(d => Upd_Account(), d => CanUpd_Account());
                 }
                 return upd_account_command;
             }
         }
-        public void Upd_Account(object sender, ExecutedRoutedEventArgs e)
+        public void Upd_Account()
         {
             SelectedAccount.SiteName = UpdAccName.ToString();
             SelectedAccount.SiteAddress = UpdAccAddress.ToString();
@@ -458,9 +454,9 @@ namespace Kurs_Passman.ViewModels
             SelectedAccount.SiteDescription = UpdAccDescription.ToString();
 
         }
-        public void CanUpd_Account(object sender, CanExecuteRoutedEventArgs e)
+        public bool CanUpd_Account()
         {
-            e.CanExecute = SelectedAccount != null;
+            return SelectedAccount != null;
         }
         #endregion Command_UpdAccount
         #endregion Commands
@@ -509,6 +505,9 @@ namespace Kurs_Passman.ViewModels
                     Parallel.ForEach(Login_Password_Stat.Keys, (kk) => { if (kk.SequenceEqual(pair)) { Login_Password_Stat[kk] += 1; } });
                 }
             }
+            Login_Stat = new(Login_Stat);
+            Password_Stat = new(Password_Stat);
+            Login_Password_Stat = new(Login_Password_Stat);
         }
 
         // Оновлення даних у вкладці "Оновлення акаунту" відбувається через callback у обробнику події зміни вкладки

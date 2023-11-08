@@ -31,7 +31,11 @@ namespace Kurs_Passman.Commands
             _execute(parameter);
         }
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
 
         Action<object> _execute;
         Predicate<object> _canExecute;

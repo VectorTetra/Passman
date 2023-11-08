@@ -65,7 +65,7 @@ namespace Kurs_Passman.Models
            
 
             DataContractJsonSerializer jsser = new DataContractJsonSerializer(typeof(List<Account>));
-            FileStream fstr = new FileStream(path, FileMode.OpenOrCreate);
+            FileStream fstr = new FileStream(path, FileMode.Truncate);
             jsser.WriteObject(fstr, accountList);
             fstr.Close();
         }

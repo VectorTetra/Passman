@@ -24,9 +24,9 @@ namespace Kurs_Passman
             MainViewModel mvmod = this.Resources["mvmod"] as MainViewModel;
             this.DataContext = mvmod;
             this.mvmod = mvmod;
-            this.CommandBindings.Add(new CommandBinding(mvmod.AddAccountCommand, mvmod.Add_Account, mvmod.CanAdd_Account));
-            this.CommandBindings.Add(new CommandBinding(mvmod.SearchAccountsCommand, mvmod.Search_Accounts, mvmod.CanSearch_Accounts));
-            this.CommandBindings.Add(new CommandBinding(mvmod.UpdAccountCommand, mvmod.Upd_Account, mvmod.CanUpd_Account));
+            //this.CommandBindings.Add(new CommandBinding(mvmod?.AddAccountCommand));
+            //this.CommandBindings.Add(new CommandBinding(mvmod.SearchAccountsCommand, mvmod.Search_Accounts, mvmod.CanSearch_Accounts));
+            //this.CommandBindings.Add(new CommandBinding(mvmod.UpdAccountCommand, mvmod.Upd_Account, mvmod.CanUpd_Account));
 
             // Заборонити вставку у поле перегляду пароля на сторінці "Інформація"
             InfoSitePassword.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, e) => { }));
