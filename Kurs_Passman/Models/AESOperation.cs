@@ -41,7 +41,6 @@ namespace Kurs_Passman.Models
             return r.Substring(0, n);
         }
 
-
         public static string EncryptString(string key, string plainText)
         {
             byte[] iv = new byte[16];

@@ -396,10 +396,12 @@
                         <TabItem Header="Статистика логінів">
                             <DataGrid x:Name="DataGridLoginStat" ItemsSource="{Binding Login_Stat}"
                                           AutoGenerateColumns="False"
-                                          GridLinesVisibility="All" HeadersVisibility="All"
+                                          GridLinesVisibility="All" 
                                           Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue"
                                           HorizontalScrollBarVisibility="Auto"  
                                           VerticalScrollBarVisibility="Auto"
+                                          RowStyle="{DynamicResource DataGridRowNonSelectable}"
+                                          HeadersVisibility="Column"
                                           >
                                 <DataGrid.Columns >
                                     <DataGridTextColumn Header="Логін" Binding="{Binding Key}"></DataGridTextColumn>
@@ -410,7 +412,7 @@
                         <TabItem Header="Статистика паролів">
                             <DataGrid x:Name="DataGridPasswordStat" ItemsSource="{Binding Password_Stat}"
                                           AutoGenerateColumns="False"
-                                          GridLinesVisibility="All" HeadersVisibility="All"
+                                          GridLinesVisibility="All" HeadersVisibility="Column"
                                           Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue"
                                           HorizontalScrollBarVisibility="Auto"  
                                           VerticalScrollBarVisibility="Auto"
@@ -425,7 +427,7 @@
                         <TabItem Header="Статистика логінів і паролів">
                             <DataGrid x:Name="DataGridLoginPasswordStat" ItemsSource="{Binding Login_Password_Stat}"
                                           AutoGenerateColumns="False"
-                                          GridLinesVisibility="All" HeadersVisibility="All"
+                                          GridLinesVisibility="All" HeadersVisibility="Column"
                                           Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue"
                                           HorizontalScrollBarVisibility="Auto"  
                                           VerticalScrollBarVisibility="Auto"

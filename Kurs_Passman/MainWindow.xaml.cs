@@ -43,11 +43,11 @@ namespace Kurs_Passman
             if (TabUpdDelAcc.IsSelected) mvmod?.LoadSelectedAccountForUpdate();
         }
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (mvmod?.SelectedAccount != null)
             {
-                mvmod?.LoadSelectedAccountForUpdate();
+                await mvmod?.LoadSelectedAccountForUpdate();
                 //MainTabControl.Visibility = Visibility.Visible;
                 TabItemAccountInfo.IsEnabled = true;
                 TabUpdDelAcc.IsEnabled = true;
