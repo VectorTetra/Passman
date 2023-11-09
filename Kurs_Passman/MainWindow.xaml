@@ -24,11 +24,9 @@
         AllowsTransparency="True"-->
     <Window.Resources>
         <conv:HeightConverter x:Key="hconv"/>
-        <mod:MainViewModel x:Key="mvmod"/>
-        
     </Window.Resources>
 
-    <Grid Background="Bisque" DataContext="{StaticResource mvmod}">
+    <Grid Background="Bisque">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.3*"/>
             <ColumnDefinition Width="0.6*"/>
@@ -498,7 +496,7 @@
                                      VerticalContentAlignment="Center"
                             />
                         <Viewbox Grid.Row="2" Grid.ColumnSpan="2">
-                            <Button Margin="5" Content="Зашифрувати" Click="Crypt_Click_1"/>
+                            <Button Margin="5" Content="{Binding CryptButtonCaption,UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" Command="{Binding CryptPasswordCommand}"/>
                         </Viewbox>
                     </Grid>
                 </TabItem>

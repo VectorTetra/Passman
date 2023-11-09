@@ -12,18 +12,20 @@ using System.Windows.Input;
 using Kurs_Passman.Commands;
 using Microsoft.EntityFrameworkCore;
 using System.Windows.Documents;
+using Kurs_Passman.Interfaces;
 
 namespace Kurs_Passman.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        public MainViewModel()
+        public MainViewModel(IDialogService dialogService)
         {
+            _dialogService = dialogService;
             db = new();
             db.Database.EnsureCreated();
             db.Accounts.Load();
-            this.Accounts = db.Accounts.Local.ToObservableCollection();
-            this.SearchedAccounts = db.Accounts.Local.ToObservableCollection();
+            Accounts = db.Accounts.Local.ToObservableCollection();
+            SearchedAccounts = db.Accounts.Local.ToObservableCollection();
         }
         PassManContext db;
         // Accounts - повна колекція всіх акаунтів
@@ -50,6 +52,7 @@ namespace Kurs_Passman.ViewModels
             {
                 _selectedAccount = value;
                 OnPropertyChanged(nameof(SelectedAccount));
+                CryptButtonCaption = (SelectedAccount.Encrypted == 1 ? "Розшифрувати" : "Зашифрувати");
             }
         }
         #endregion SelectedAccount
@@ -184,6 +187,10 @@ namespace Kurs_Passman.ViewModels
         }
         #endregion IsOrderAscending
         #endregion Filters
+
+        #region DialogService
+        private readonly IDialogService _dialogService;
+        #endregion DialogService
 
         #region AddingAccount
 
@@ -325,6 +332,19 @@ namespace Kurs_Passman.ViewModels
         }
         #endregion SecretKey
 
+        #region CryptButtonCaption
+        private string _CryptButtonCaption = string.Empty;
+        public string CryptButtonCaption
+        {
+            get { return _CryptButtonCaption; }
+            set
+            {
+                _CryptButtonCaption = value;
+                OnPropertyChanged(nameof(CryptButtonCaption));
+            }
+        }
+        #endregion CryptButtonCaption
+
         #region SearchingExpression
         private string _SearchingExpression = string.Empty;
         public string SearchingExpression
@@ -337,6 +357,7 @@ namespace Kurs_Passman.ViewModels
             }
         }
         #endregion SearchingExpression
+
         #region Commands
 
         #region Command_AddAccount
@@ -347,33 +368,31 @@ namespace Kurs_Passman.ViewModels
             {
                 if (add_account_command == null)
                 {
-                    add_account_command = new DelegateCommand(d => Add_Account(), d=> CanAdd_Account());
+                    add_account_command = new DelegateCommand(
+                        d =>
+                        {
+                            db.Accounts.Add(new Account { Login = AddAccLogin, SiteName = AddAccName, SiteAddress = AddAccAddress, Password = AddAccPassword, SiteDescription = AddAccDescription });
+                            db.SaveChangesAsync();
+                            AddAccAddress = string.Empty;
+                            AddAccLogin = string.Empty;
+                            AddAccDescription = string.Empty;
+                            AddAccName = string.Empty;
+                            AddAccPassword = string.Empty;
+                            if (SearchingExpression == string.Empty)
+                            {
+                                SearchedAccounts = Accounts;
+                            }
+                        },
+                        d =>
+                        {
+                            return (AddAccAddress.Length > 0 &&
+                                AddAccLogin.Length > 0 &&
+                                AddAccName.Length > 0 &&
+                                AddAccPassword.Length > 0);
+                        });
                 }
                 return add_account_command;
             }
-        }
-        public void Add_Account()
-        {
-            db.Accounts.Add(new Account { Login = AddAccLogin, SiteName = AddAccName, SiteAddress = AddAccAddress, Password = AddAccPassword, SiteDescription = AddAccDescription });
-            db.SaveChangesAsync();
-            AddAccAddress = string.Empty;
-            AddAccLogin = string.Empty;
-            AddAccDescription = string.Empty;
-            AddAccName = string.Empty;
-            AddAccPassword = string.Empty;
-            if (SearchingExpression == string.Empty)
-            {
-                SearchedAccounts = Accounts;
-            }
-
-        }
-        public bool CanAdd_Account()
-        {
-            // Вказання опису сайту не є обов'язковим
-           return (AddAccAddress.Length > 0 &&
-                            AddAccLogin.Length > 0 &&
-                            AddAccName.Length > 0 &&
-                            AddAccPassword.Length > 0);
         }
         #endregion Command_AddAccount
 
@@ -385,61 +404,61 @@ namespace Kurs_Passman.ViewModels
             {
                 if (search_accounts_command == null)
                 {
-                    search_accounts_command = new DelegateCommand(d => Search_Accounts(), null);
+                    search_accounts_command = new DelegateCommand(
+                        d =>
+                        {
+                            if (SearchingExpression == string.Empty)
+                            {
+                                SearchedAccounts = Accounts;
+                            }
+                            else
+                            {
+                                SearchedAccounts = new ObservableCollection<Account>();
+                                Regex regex = new Regex(SearchingExpression);
+                                if (IsSearchByLogin)
+                                {
+                                    foreach (var item in Accounts)
+                                    {
+                                        if (regex.IsMatch(item.Login) && !SearchedAccounts.Contains(item))
+                                        { SearchedAccounts.Add(item); }
+                                    }
+                                }
+                                if (IsSearchBySiteAddress)
+                                {
+                                    foreach (var item in Accounts)
+                                    {
+                                        if (regex.IsMatch(item.SiteAddress) && !SearchedAccounts.Contains(item))
+                                        { SearchedAccounts.Add(item); }
+                                    }
+                                }
+                                if (IsSearchBySiteName)
+                                {
+                                    foreach (var item in Accounts)
+                                    {
+                                        if (regex.IsMatch(item.SiteName) && !SearchedAccounts.Contains(item))
+                                        { SearchedAccounts.Add(item); }
+                                    }
+                                }
+                                if (IsSearchBySiteDescription)
+                                {
+                                    foreach (var item in Accounts)
+                                    {
+                                        if (regex.IsMatch(item.SiteDescription) && !SearchedAccounts.Contains(item))
+                                        { SearchedAccounts.Add(item); }
+                                    }
+                                }
+                                if (!IsSearchByLogin && !IsSearchBySiteAddress && !IsSearchBySiteDescription && !IsSearchBySiteName)
+                                {
+                                    foreach (var item in Accounts)
+                                    {
+                                        if ((regex.IsMatch(item.SiteDescription) || regex.IsMatch(item.SiteName) || regex.IsMatch(item.SiteAddress) || regex.IsMatch(item.Login)) && !SearchedAccounts.Contains(item))
+                                        { SearchedAccounts.Add(item); }
+                                    }
+                                }
+                            }
+                        }, null);
                 }
                 return search_accounts_command;
-            }
-        }
-        public void Search_Accounts()
-        {
-            if (SearchingExpression == string.Empty)
-            {
-                SearchedAccounts = Accounts;
-            }
-            else
-            {
-                SearchedAccounts = new ObservableCollection<Account>();
-                Regex regex = new Regex(SearchingExpression);
-                if (IsSearchByLogin)
-                {
-                    foreach (var item in Accounts)
-                    {
-                        if (regex.IsMatch(item.Login) && !SearchedAccounts.Contains(item))
-                        { SearchedAccounts.Add(item); }
-                    }
-                }
-                if (IsSearchBySiteAddress)
-                {
-                    foreach (var item in Accounts)
-                    {
-                        if (regex.IsMatch(item.SiteAddress) && !SearchedAccounts.Contains(item))
-                        { SearchedAccounts.Add(item); }
-                    }
-                }
-                if (IsSearchBySiteName)
-                {
-                    foreach (var item in Accounts)
-                    {
-                        if (regex.IsMatch(item.SiteName) && !SearchedAccounts.Contains(item))
-                        { SearchedAccounts.Add(item); }
-                    }
-                }
-                if (IsSearchBySiteDescription)
-                {
-                    foreach (var item in Accounts)
-                    {
-                        if (regex.IsMatch(item.SiteDescription) && !SearchedAccounts.Contains(item))
-                        { SearchedAccounts.Add(item); }
-                    }
-                }
-                if (!IsSearchByLogin && !IsSearchBySiteAddress && !IsSearchBySiteDescription && !IsSearchBySiteName)
-                {
-                    foreach (var item in Accounts)
-                    {
-                        if ((regex.IsMatch(item.SiteDescription) || regex.IsMatch(item.SiteName) || regex.IsMatch(item.SiteAddress) || regex.IsMatch(item.Login)) && !SearchedAccounts.Contains(item))
-                        { SearchedAccounts.Add(item); }
-                    }
-                }
             }
         }
         #endregion Command_SearchAccounts
@@ -452,26 +471,26 @@ namespace Kurs_Passman.ViewModels
             {
                 if (upd_account_command == null)
                 {
-                    upd_account_command = new DelegateCommand(d => Upd_Account(), d => CanUpd_Account());
+                    upd_account_command = new DelegateCommand(
+                        d =>
+                        {
+                            if (_dialogService.ConfirmDialog("Ви точно хочете відредагувати обраний акаунт?"))
+                            {
+                                SelectedAccount.SiteName = UpdAccName.ToString();
+                                SelectedAccount.SiteAddress = UpdAccAddress.ToString();
+                                if (SelectedAccount.Password != UpdAccPassword.ToString()) { SelectedAccount.Encrypted = 0; }
+                                SelectedAccount.Password = UpdAccPassword.ToString();
+                                SelectedAccount.Login = UpdAccLogin.ToString();
+                                SelectedAccount.SiteDescription = UpdAccDescription.ToString();
+                                SelectedAccount = SelectedAccount;
+                                db.Entry(SelectedAccount).State = EntityState.Modified;
+                                db.SaveChangesAsync();
+                            }
+                        },
+                        d => { return SelectedAccount != null; });
                 }
                 return upd_account_command;
             }
-        }
-        public void Upd_Account()
-        {
-            SelectedAccount.SiteName = UpdAccName.ToString();
-            SelectedAccount.SiteAddress = UpdAccAddress.ToString();
-            if (SelectedAccount.Password != UpdAccPassword.ToString()) { SelectedAccount.Encrypted = 0; }
-            SelectedAccount.Password = UpdAccPassword.ToString();
-            SelectedAccount.Login = UpdAccLogin.ToString();
-            SelectedAccount.SiteDescription = UpdAccDescription.ToString();
-            SelectedAccount = SelectedAccount;
-            db.Entry(SelectedAccount).State = EntityState.Modified;
-            db.SaveChangesAsync();
-        }
-        public bool CanUpd_Account()
-        {
-            return SelectedAccount != null;
         }
         #endregion Command_UpdAccount
 
@@ -483,20 +502,57 @@ namespace Kurs_Passman.ViewModels
             {
                 if (upd_account_command == null)
                 {
-                    upd_account_command = new DelegateCommand(d => Del_Account(),
-                        d => {
+                    upd_account_command = new DelegateCommand(
+                    d =>
+                    {
+                        if (_dialogService.ConfirmDialog("Ви точно хочете видалити обраний акаунт?"))
+                        {
+                            db.Accounts.Remove(SelectedAccount);
+                            db.SaveChangesAsync();
+                        }
+                    },
+                    d =>
+                    {
                         return SelectedAccount != null;
                     });
                 }
                 return upd_account_command;
             }
         }
-        public void Del_Account()
-        {
-            db.Accounts.Remove(SelectedAccount);
-            db.SaveChangesAsync();
-        }
         #endregion Command_UpdAccount
+
+        #region Command_CryptPassword
+        private DelegateCommand crypt_password_command = null;
+        public ICommand CryptPasswordCommand
+        {
+            get
+            {
+                if (crypt_password_command == null)
+                {
+                    crypt_password_command = new DelegateCommand(
+                    d =>
+                    {
+                        string message = SelectedAccount.Encrypted == 1 ? 
+                        "Ви точно хочете розшифрувати пароль обраного акаунту?" : 
+                        "Ви точно хочете зашифрувати пароль обраного акаунту?";
+                        if (_dialogService.ConfirmDialog(message))
+                        {
+                            SelectedAccount.Crypt(SecretKey);
+                            db.Entry(SelectedAccount).State = EntityState.Modified;
+                            db.SaveChangesAsync();
+                            SelectedAccount = SelectedAccount;
+                            SecretKey = "";
+                        }
+                    },
+                    d =>
+                    {
+                        return (SelectedAccount != null && SecretKey.Length > 0);
+                    });
+                }
+                return crypt_password_command;
+            }
+        }
+        #endregion Command_CryptPassword
         #endregion Commands
 
         #region Methods
@@ -591,7 +647,7 @@ namespace Kurs_Passman.ViewModels
         public void LoadData(string path)
         {
             List<Account> list = new List<Account>();
-            Account.Load(path,out list);
+            Account.Load(path, out list);
             this.Accounts = new ObservableCollection<Account>(list);
             this.SearchedAccounts = new ObservableCollection<Account>(list);
         }

@@ -1,4 +1,5 @@
-﻿using Kurs_Passman.ViewModels;
+﻿using Kurs_Passman.Interfaces;
+using Kurs_Passman.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,15 +21,16 @@ namespace Kurs_Passman
             //mvmod = this.Resources["mvmod"] as MainViewModel;
             Uri iconUri = new Uri("../../../Resources/Passman_Icon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = BitmapFrame.Create(iconUri);
-
-            MainViewModel mvmod = this.Resources["mvmod"] as MainViewModel;
+            MainViewModel mainViewModel = new MainViewModel(new DialogService());
+            this.Resources.Add("mvmod", mainViewModel);
+            this.mvmod = mainViewModel;
             this.DataContext = mvmod;
-            this.mvmod = mvmod;
 
             // Заборонити вставку у поле перегляду пароля на сторінці "Інформація"
             InfoSitePassword.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, e) => { }));
             // Заборонити вставку у поле перегляду пароля на сторінці "Шифрування"
             CryptSitePassword.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, e) => { }));
+            // Заборонити вставку у поле секретного ключа шифрування на сторінці "Шифрування"
             CryptSitePasswordSecretKey.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, e) => { }));
         }
         // Виникає під час зміни вкладки
@@ -36,33 +38,9 @@ namespace Kurs_Passman
         {
             if (TabStatistics.IsSelected)
             {
-                mvmod.UpdateStatistics();
+                mvmod?.UpdateStatistics();
             }
             if (TabUpdDelAcc.IsSelected) mvmod?.LoadSelectedAccountForUpdate();
-        }
-        // Виникає під час натискання кнопки видалення
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (mvmod?.SelectedAccount != null)
-            {
-                var res = MessageBox.Show("Ви точно хочете видалити цей акаунт?", "Видалення акаунту", MessageBoxButton.YesNo);
-                if (res == MessageBoxResult.Yes)
-                {
-                    mvmod?.DeleteSelectedAccount();
-                }
-            }
-        }
-
-        private void Crypt_Click_1(object sender, RoutedEventArgs e)
-        {
-            if (mvmod?.SelectedAccount != null && mvmod?.SecretKey.Length > 0)
-            {
-                var res = MessageBox.Show("Ви точно хочете зашифрувати цей пароль?", "Шифрування / Розшифрування пароля", MessageBoxButton.YesNo);
-                if (res == MessageBoxResult.Yes)
-                {
-                    mvmod?.CryptPassword();
-                }
-            }
         }
 
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -91,19 +69,5 @@ namespace Kurs_Passman
         {
             e.Handled = true;
         }
-        //// Перевірка на відкриття контекстного меню при натисканні Mouse2(заборонити).
-        //private void InfoSitePassword_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        //{
-        //    e.Handled = true;
-        //}
-        //// Перевірка на використання комбінацій Ctrl+C, Ctrl+V (заборонити).
-        //private void InfoSitePassword_PreviewKeyUp(object sender, KeyEventArgs e)
-        //{
-        //    if (((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.V) 
-        //      ||((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && e.Key == Key.C))
-        //    {
-        //        e.Handled = true;
-        //    }
-        //}
     }
 }
