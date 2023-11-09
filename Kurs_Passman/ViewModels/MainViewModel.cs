@@ -557,51 +557,55 @@ namespace Kurs_Passman.ViewModels
 
         #region Methods
         // Оновлення даних у вкладці "Статистика" відбувається через callback у обробнику події зміни вкладки
-        public void UpdateStatistics()
+        public Task UpdateStatistics()
         {
-            // Створюємо новий криптографічний об'єкт симетричного шифрування.
-            // Він необхідний, щоб отримати випадково згенерований ключ шифрування
-            var cipherKey = AesOperation.GetRandomString();
-            string crypted_pass = string.Empty;
-            Login_Stat.Clear();
-            Password_Stat.Clear();
-            Login_Password_Stat.Clear();
-            foreach (var item in Accounts)
+            return Task.Run(() => 
             {
-                // Якщо немає акаунтів з таким логіном - додати, якщо є - збільшити лічильник на 1
-                if (!Login_Stat.ContainsKey(item.Login))
+                // Створюємо новий криптографічний об'єкт симетричного шифрування.
+                // Він необхідний, щоб отримати випадково згенерований ключ шифрування
+                var cipherKey = AesOperation.GetRandomString();
+                string crypted_pass = string.Empty;
+                Login_Stat.Clear();
+                Password_Stat.Clear();
+                Login_Password_Stat.Clear();
+                foreach (var item in Accounts)
                 {
-                    Login_Stat.TryAdd(item.Login, 1);
-                }
-                else
-                {
-                    Login_Stat[item.Login] += 1;
-                }
-                // Якщо немає акаунтів з таким паролем - додати, якщо є - збільшити лічильник на 1
-                crypted_pass = AesOperation.EncryptString(cipherKey, item.Password);
-                if (!Password_Stat.ContainsKey(crypted_pass))
-                {
-                    Password_Stat.TryAdd(crypted_pass, 1);
-                }
-                else
-                {
-                    Password_Stat[crypted_pass] += 1;
-                }
+                    // Якщо немає акаунтів з таким логіном - додати, якщо є - збільшити лічильник на 1
+                    if (!Login_Stat.ContainsKey(item.Login))
+                    {
+                        Login_Stat.TryAdd(item.Login, 1);
+                    }
+                    else
+                    {
+                        Login_Stat[item.Login] += 1;
+                    }
+                    // Якщо немає акаунтів з таким паролем - додати, якщо є - збільшити лічильник на 1
+                    crypted_pass = AesOperation.EncryptString(cipherKey, item.Password);
+                    if (!Password_Stat.ContainsKey(crypted_pass))
+                    {
+                        Password_Stat.TryAdd(crypted_pass, 1);
+                    }
+                    else
+                    {
+                        Password_Stat[crypted_pass] += 1;
+                    }
 
-                List<string> pair = new List<string>() { item.Login, crypted_pass };
-                // Якщо немає акаунтів з такими логіном і паролем - додати, якщо є - збільшити лічильник на 1
-                if (!Login_Password_Stat.Keys.Any(key => key.SequenceEqual(pair)))
-                {
-                    Login_Password_Stat.TryAdd(pair, 1);
+                    List<string> pair = new List<string>() { item.Login, crypted_pass };
+                    // Якщо немає акаунтів з такими логіном і паролем - додати, якщо є - збільшити лічильник на 1
+                    if (!Login_Password_Stat.Keys.Any(key => key.SequenceEqual(pair)))
+                    {
+                        Login_Password_Stat.TryAdd(pair, 1);
+                    }
+                    else
+                    {
+                        Parallel.ForEach(Login_Password_Stat.Keys, (kk) => { if (kk.SequenceEqual(pair)) { Login_Password_Stat[kk] += 1; } });
+                    }
                 }
-                else
-                {
-                    Parallel.ForEach(Login_Password_Stat.Keys, (kk) => { if (kk.SequenceEqual(pair)) { Login_Password_Stat[kk] += 1; } });
-                }
-            }
-            Login_Stat = new(Login_Stat);
-            Password_Stat = new(Password_Stat);
-            Login_Password_Stat = new(Login_Password_Stat);
+                Login_Stat = new(Login_Stat);
+                Password_Stat = new(Password_Stat);
+                Login_Password_Stat = new(Login_Password_Stat);
+            });
+            
         }
 
         // Оновлення даних у вкладці "Оновлення акаунту" відбувається через callback у обробнику події зміни вкладки

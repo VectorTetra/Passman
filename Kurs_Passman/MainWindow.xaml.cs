@@ -34,11 +34,11 @@ namespace Kurs_Passman
             CryptSitePasswordSecretKey.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, e) => { }));
         }
         // Виникає під час зміни вкладки
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (TabStatistics.IsSelected)
             {
-                mvmod?.UpdateStatistics();
+                await mvmod?.UpdateStatistics();
             }
             if (TabUpdDelAcc.IsSelected) mvmod?.LoadSelectedAccountForUpdate();
         }
