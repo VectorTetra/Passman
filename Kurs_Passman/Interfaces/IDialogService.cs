@@ -9,19 +9,19 @@ namespace Kurs_Passman.Interfaces
 {
     public interface IDialogService
     {
-        bool ConfirmDialog(string message);
-        void MessageDialog(string message);
+        bool ConfirmDialog(string message,string caption);
+        void MessageDialog(string message,string caption);
     }
     class DialogService : IDialogService
     {
-        public bool ConfirmDialog(string message)
+        public bool ConfirmDialog(string message, string caption)
         {
-            MessageBoxResult res = MessageBox.Show(message, "Підтвердження", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult res = MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
             return res == MessageBoxResult.Yes ? true : false;
         }
-        public void MessageDialog(string message) 
+        public void MessageDialog(string message, string caption) 
         {
-            MessageBox.Show(message);
+            MessageBox.Show(message, caption);
         }
     }
    

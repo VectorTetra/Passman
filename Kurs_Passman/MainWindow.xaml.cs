@@ -69,5 +69,10 @@ namespace Kurs_Passman
         {
             e.Handled = true;
         }
+
+        private void InfoSitePassword_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+        }
     }
 }

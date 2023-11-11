@@ -16,6 +16,7 @@
          TextOptions.TextRenderingMode="Auto"
          Background="{DynamicResource MaterialDesignBackground}"
          FontFamily="{DynamicResource MaterialDesignFont}"
+        Style="{DynamicResource WindowCustom}"
         >
     <!--TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -42,9 +43,12 @@
                         <RowDefinition Height="0.65*"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
+                    <!--FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}"-->
                     <TextBox Margin="5" 
-                         FontSize="{Binding RelativeSource={RelativeSource Self},Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=2}"
-                         Text="{Binding SearchingExpression}"/>
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         FontSize="{Binding ElementName=PassManWindow,Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=32}"
+                         Text="{Binding SearchingExpression}"
+                         materialDesign:HintAssist.Hint="Введіть дані для пошуку"/>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -178,37 +182,40 @@
                             </ScrollViewer >
                         </Border>
                         <Border Grid.Column="1" Background="AliceBlue">
-                            <Viewbox >
-                                <TextBlock Margin="5" Style="{StaticResource MaterialDesignDataGridTextColumnStyle}" Name="InfoSiteName" Text="{Binding SelectedAccount.SiteName, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"/>
-                            </Viewbox>
+
+                            <TextBlock Margin="5" Name="InfoSiteName" VerticalAlignment="Center"
+                                           Text="{Binding SelectedAccount.SiteName, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"
+                                           FontSize="{Binding ElementName=PassManWindow,Path=ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"/>
+
                         </Border>
                         <Border Grid.Column="1" Grid.Row="1" Background="PaleGreen">
-                            <Viewbox >
-                                <TextBlock Margin="5" Name="InfoSiteAddress" Text="{Binding SelectedAccount.SiteAddress, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"/>
-                            </Viewbox>
+
+                            <TextBlock Margin="5" Name="InfoSiteAddress" VerticalAlignment="Center"
+                                           Text="{Binding SelectedAccount.SiteAddress, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"
+                                           FontSize="{Binding ElementName=PassManWindow,Path=ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"/>
+
                         </Border>
                         <Border Grid.Column="1" Grid.Row="2" Background="LightPink">
-                            <Viewbox Grid.Column="1" Grid.Row="2">
-                                <TextBlock Margin="5" Name="InfoSiteLogin" Text="{Binding SelectedAccount.Login, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"/>
-                            </Viewbox>
+
+                            <TextBlock Margin="5" Name="InfoSiteLogin" VerticalAlignment="Center"
+                                           Text="{Binding SelectedAccount.Login, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"
+                                           FontSize="{Binding ElementName=PassManWindow,Path=ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"/>
+
                         </Border>
-                        <Border Grid.Column="1" Grid.Row="3" Background="LightSkyBlue">
+                        <Border Grid.Column="1" Grid.Row="3" Background="LightSkyBlue" Name="PassBorder">
+
                             <PasswordBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="3" 
-                                                 PreviewTextInput="InfoSitePassword_PreviewTextInput"
-                                     Style="{StaticResource ResourceKey=MaterialDesignRevealPasswordBox}" 
-                                     Name="InfoSitePassword" 
-                                     materialDesign:PasswordBoxAssist.Password="{Binding SelectedAccount.Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                     materialDesign:PasswordBoxAssist.PasswordMaskedIcon="Eye"
-                                     materialDesign:PasswordBoxAssist.IsPasswordRevealed="False"
-                                     materialDesign:PasswordBoxAssist.PasswordRevealedIcon="EyeShut"
-                                     FontSize="{Binding ElementName=PassManWindow,Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"
-                                     VerticalContentAlignment="Center"
-                            />
-
-
-
-                            <!--<TextBlock Margin="5" Grid.Column="1" Grid.Row="3" Name="InfoSitePassword" FontSize="20" TextWrapping="Wrap" Text="{Binding SelectedAccount.Password, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"/>-->
-
+                                         PreviewKeyDown="InfoSitePassword_PreviewKeyDown"
+                                         Focusable="False"
+                                         Style="{StaticResource ResourceKey=MaterialDesignRevealPasswordBox}" 
+                                         Name="InfoSitePassword" 
+                                         FontSize="{Binding ElementName=PassManWindow,Path=ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"
+                                         materialDesign:PasswordBoxAssist.Password="{Binding SelectedAccount.Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                         materialDesign:PasswordBoxAssist.PasswordMaskedIcon="Eye"
+                                         materialDesign:PasswordBoxAssist.IsPasswordRevealed="False"
+                                         materialDesign:PasswordBoxAssist.PasswordRevealedIcon="EyeShut"
+                                         VerticalContentAlignment="Center"
+                                />
                         </Border>
                     </Grid>
                 </TabItem>
@@ -225,7 +232,6 @@
                             </StackPanel>
                         </Viewbox>
                     </TabItem.Header>
-
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0.7*"/>
@@ -267,7 +273,7 @@
                                  Style="{StaticResource MaterialDesignTextBox}" materialDesign:HintAssist.Hint="Введіть назву сайту"
                                  Name="AddSiteName" Text="{Binding AddAccName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                                  FontSize="{Binding ElementName=PassManWindow,Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"
-                                 VerticalContentAlignment="Bottom"/>
+                                 VerticalContentAlignment="Bottom"></TextBox>
 
                         <TextBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="1" 
                                  Style="{StaticResource MaterialDesignTextBox}" materialDesign:HintAssist.Hint="Введіть адресу сайту" 
@@ -346,7 +352,9 @@
                             <TextBlock Margin="5" Text="Опис сайту (необов'язково)"/>
                         </Viewbox>
                         <ScrollViewer Grid.Row="5" Grid.ColumnSpan="2" Margin="5">
-                            <TextBox Margin="5" Name="UpdSiteDescription" Background="Transparent" Text="{Binding UpdAccDescription}" FontSize="20" TextWrapping="Wrap"/>
+                            <TextBox Margin="5" Name="UpdSiteDescription" Background="Transparent" 
+                                     Text="{Binding UpdAccDescription}" FontSize="20" TextWrapping="Wrap"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
                         </ScrollViewer >
 
 
@@ -475,9 +483,10 @@
                                  Text="{Binding SecretKey,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"></TextBox>-->
 
                         <PasswordBox Margin="5" Grid.Column="0" Grid.ColumnSpan="2" Background="Transparent" 
-                                                 PreviewTextInput="InfoSitePassword_PreviewTextInput"
+                                                 PreviewKeyDown="InfoSitePassword_PreviewKeyDown"
                                      Style="{StaticResource ResourceKey=MaterialDesignFloatingHintRevealPasswordBox}" 
                                      Name="CryptSitePassword" 
+                                     Focusable="False"
                                      materialDesign:HintAssist.Hint="Поточний пароль акаунту"
                                      materialDesign:PasswordBoxAssist.Password="{Binding SelectedAccount.Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                      materialDesign:PasswordBoxAssist.PasswordMaskedIcon="Eye"

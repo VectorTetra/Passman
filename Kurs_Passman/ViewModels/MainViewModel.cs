@@ -54,7 +54,9 @@ namespace Kurs_Passman.ViewModels
             {
                 _selectedAccount = value;
                 OnPropertyChanged(nameof(SelectedAccount));
-                CryptButtonCaption = (SelectedAccount.Encrypted == 1 ? "Розшифрувати" : "Зашифрувати");
+                if(SelectedAccount != null) 
+                { CryptButtonCaption = (SelectedAccount.Encrypted == 1 ? "Розшифрувати" : "Зашифрувати"); }
+                
             }
         }
         #endregion SelectedAccount
@@ -389,10 +391,14 @@ namespace Kurs_Passman.ViewModels
                                     {
                                         SearchedAccounts = Accounts;
                                     }
+                                    if (SelectedAccount == null && SearchedAccounts.Count > 0)
+                                    {
+                                        SelectedAccount = SearchedAccounts[SearchedAccounts.Count - 1];
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
-                                    _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message); }, null);
+                                    _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message,ex.GetType().ToString()); }, null);
                                 }
                             });
                         },
@@ -477,7 +483,7 @@ namespace Kurs_Passman.ViewModels
                             }
                             catch (Exception ex)
                             {
-                                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message); }, null);
+                                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message,ex.GetType().ToString()); }, null);
                             }
 
                         }, null);
@@ -502,7 +508,7 @@ namespace Kurs_Passman.ViewModels
                             {
                                 await Task.Run(() =>
                                 {
-                                    if (_dialogService.ConfirmDialog("Ви точно хочете відредагувати обраний акаунт?"))
+                                    if (_dialogService.ConfirmDialog("Ви точно хочете відредагувати обраний акаунт?","Підтвердження редагування"))
                                     {
                                         SelectedAccount.SiteName = UpdAccName.ToString();
                                         SelectedAccount.SiteAddress = UpdAccAddress.ToString();
@@ -516,12 +522,16 @@ namespace Kurs_Passman.ViewModels
                                         //_uiContext.Send(d => { OnPropertyChanged(nameof(SearchedAccounts)); }, null);
                                         //OnPropertyChanged(nameof(SearchedAccounts));
                                         SearchedAccounts = new(SearchedAccounts);
+                                        if (SelectedAccount == null && SearchedAccounts.Count > 0)
+                                        {
+                                            SelectedAccount = SearchedAccounts[SearchedAccounts.Count - 1];
+                                        }
                                     }
                                 });
                             }
                             catch (Exception ex)
                             {
-                                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message); }, null);
+                                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message, ex.GetType().ToString()); }, null);
                             }
 
                         },
@@ -549,17 +559,21 @@ namespace Kurs_Passman.ViewModels
                             {
                                 _uiContext.Send(del =>
                                 {
-                                    if (_dialogService.ConfirmDialog("Ви точно хочете видалити обраний акаунт?"))
+                                    if (_dialogService.ConfirmDialog("Ви точно хочете видалити обраний акаунт?","Підтвердження видалення"))
                                     {
                                         db.Accounts.Remove(SelectedAccount);
                                         db.SaveChangesAsync();
                                     }
                                 }, null);
+                                if (SelectedAccount == null && SearchedAccounts.Count > 0)
+                                {
+                                    SelectedAccount = SearchedAccounts[SearchedAccounts.Count - 1];
+                                }
                             });
                         }
                         catch (Exception ex)
                         {
-                            _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message); }, null);
+                            _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message, ex.GetType().ToString()); }, null);
                         }
                     },
                     d =>
@@ -590,7 +604,7 @@ namespace Kurs_Passman.ViewModels
                                 string message = SelectedAccount.Encrypted == 1 ?
                                     "Ви точно хочете розшифрувати пароль обраного акаунту?" :
                                     "Ви точно хочете зашифрувати пароль обраного акаунту?";
-                                if (_dialogService.ConfirmDialog(message))
+                                if (_dialogService.ConfirmDialog(message,"Підтвердження"))
                                 {
                                     SelectedAccount.Crypt(SecretKey);
                                     _uiContext.Send(del =>
@@ -603,9 +617,13 @@ namespace Kurs_Passman.ViewModels
                                 }
                             });
                         }
+                        catch(System.Security.Cryptography.CryptographicException ex)
+                        {
+                            _uiContext.Send(d => { _dialogService.MessageDialog("Введено неправильний ключ шифрування!", "Помилка шифрування"); }, null);
+                        }
                         catch (Exception ex)
                         {
-                            _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message); }, null);
+                            _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message,ex.GetType().ToString()); }, null);
                         }
 
                     },
@@ -632,6 +650,8 @@ namespace Kurs_Passman.ViewModels
                     // Він необхідний, щоб отримати випадково згенерований ключ шифрування
                     var cipherKey = AesOperation.GetRandomString();
                     string crypted_pass = string.Empty;
+                    _uiContext.Send(d => { 
+                    
                     Login_Stat.Clear();
                     Password_Stat.Clear();
                     Login_Password_Stat.Clear();
@@ -671,11 +691,12 @@ namespace Kurs_Passman.ViewModels
                     Login_Stat = new(Login_Stat);
                     Password_Stat = new(Password_Stat);
                     Login_Password_Stat = new(Login_Password_Stat);
+                    }, null);
                 });
             }
             catch (Exception ex)
             {
-                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message); }, null);
+                _uiContext.Send(d => { _dialogService.MessageDialog(ex.InnerException.Message,"Помилка!"); }, null);
             }
         }
 
@@ -698,7 +719,7 @@ namespace Kurs_Passman.ViewModels
             }
             catch (Exception ex)
             {
-                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message); }, null);
+                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message,ex.GetType().ToString()); }, null);
             }
         }
         // Видалення акаунту у вкладці "Оновлення акаунту" відбувається через callback у обробнику події натискання на кнопку із підтвердженням
