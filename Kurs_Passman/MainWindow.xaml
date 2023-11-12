@@ -16,13 +16,7 @@
          TextOptions.TextRenderingMode="Auto"
          Background="{DynamicResource MaterialDesignBackground}"
          FontFamily="{DynamicResource MaterialDesignFont}"
-        Style="{DynamicResource WindowCustom}"
         >
-    <!--TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        TextElement.FontWeight="Regular"
-        TextElement.FontSize="13"
-        WindowStyle="None"
-        AllowsTransparency="True"-->
     <Window.Resources>
         <conv:HeightConverter x:Key="hconv"/>
     </Window.Resources>

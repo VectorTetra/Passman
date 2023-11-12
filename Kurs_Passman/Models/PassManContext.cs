@@ -13,7 +13,7 @@ namespace Kurs_Passman.Models
         public DbSet<Account> Accounts { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=PassMan.db");
+            optionsBuilder.UseSqlite("Data Source=SQLiteDB/PassMan.db");
         }
     }
 }

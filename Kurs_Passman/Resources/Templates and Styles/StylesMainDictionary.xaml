@@ -3,24 +3,4 @@
     <Style x:Key="DataGridRowNonSelectable" TargetType="DataGridRow">
         <Setter Property="IsHitTestVisible" Value="False"/>
     </Style>
-    <Style x:Key="WindowCustom" TargetType="Window">
-        <Style.Setters>
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush>
-                        <GradientStop Offset="0" Color="Aqua"></GradientStop>
-                        <GradientStop Offset="0.25" Color="CadetBlue"></GradientStop>
-                        <GradientStop Offset="0.5" Color="MediumPurple"></GradientStop>
-                        <GradientStop Offset="0.75" Color="Purple"></GradientStop>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-        </Style.Setters>
-    </Style>
-    <Style x:Key="InfoTextBox" TargetType="TextBlock">
-        <Style.Setters>
-            <Setter Property="VerticalAlignment" Value="Bottom"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style.Setters>
-    </Style>
 </ResourceDictionary>
