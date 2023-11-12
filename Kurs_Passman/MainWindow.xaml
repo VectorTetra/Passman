@@ -89,15 +89,15 @@
                         <DataTemplate>
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Login: "/>
+                                    <TextBlock Text="Логін: "/>
                                     <TextBlock Text="{Binding Login}"></TextBlock>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Site Address: "/>
+                                    <TextBlock Text="Адреса сайту: "/>
                                     <TextBlock Text="{Binding SiteAddress}"></TextBlock>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Site Name: "/>
+                                    <TextBlock Text="Назва сайту: "/>
                                     <TextBlock Text="{Binding SiteName}"></TextBlock>
                                 </StackPanel>
                             </StackPanel>
@@ -172,14 +172,18 @@
                         </Border>
                         <Border Grid.Row="5" Grid.ColumnSpan="2" Background="LightYellow">
                             <ScrollViewer Grid.Row="5" Grid.ColumnSpan="2" Margin="5">
-                                <TextBlock Margin="5" Name="InfoSiteDescription" Text="{Binding SelectedAccount.SiteDescription, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" TextWrapping="Wrap"/>
+                                <TextBox Margin="5" Name="InfoSiteDescription" Text="{Binding SelectedAccount.SiteDescription, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"
+                                         TextWrapping="Wrap"
+                                         Focusable="False" FontSize="20"
+                                           />
                             </ScrollViewer >
                         </Border>
                         <Border Grid.Column="1" Background="AliceBlue">
 
                             <TextBlock Margin="5" Name="InfoSiteName" VerticalAlignment="Center"
                                            Text="{Binding SelectedAccount.SiteName, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"
-                                           FontSize="{Binding ElementName=PassManWindow,Path=ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"/>
+                                           FontSize="{Binding ElementName=PassManWindow,Path=ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"
+                                        />
 
                         </Border>
                         <Border Grid.Column="1" Grid.Row="1" Background="PaleGreen">
@@ -294,6 +298,7 @@
                             <TextBox Margin="5" Name="AddSiteDescription" Background="Transparent" FontSize="20" 
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                      Text="{Binding AddAccDescription, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" TextWrapping="Wrap"
+                                     AcceptsReturn="True"
                                      />
                         </ScrollViewer >
                         <Button Margin="5" Grid.Row="6" Grid.ColumnSpan="2" Content="Додати акаунт" 
@@ -348,7 +353,8 @@
                         <ScrollViewer Grid.Row="5" Grid.ColumnSpan="2" Margin="5">
                             <TextBox Margin="5" Name="UpdSiteDescription" Background="Transparent" 
                                      Text="{Binding UpdAccDescription}" FontSize="20" TextWrapping="Wrap"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     AcceptsReturn="True"/>
                         </ScrollViewer >
 
 

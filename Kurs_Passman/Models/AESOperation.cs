@@ -25,7 +25,7 @@ namespace Kurs_Passman.Models
             return word;
            
         }
-        //генератор повторів пароля, в будь-якому випадку повертає 16-символьний ключ
+        //генератор повторів пароля
         private static string GetRepeatKey(string s, int n)
         {
             if (s.Length > 16)

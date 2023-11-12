@@ -9,12 +9,13 @@ namespace Kurs_Passman.Models
 {
     [Serializable]
     [DataContract]
+
     // Клас Account - зберігає інформацію про сайт та його акаунт з логіном та паролем
     public class Account
     {
         public int Id { get; set; }
         
-        public int Encrypted { get; set; } = 0;                     // Демонструє, чи зашифрований пароль
+        public int Encrypted { get; set; } = 0;             // Демонструє, чи зашифрований пароль
         
         public string SiteAddress { get; set; }             // Адреса сайту
         
