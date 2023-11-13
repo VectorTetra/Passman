@@ -27,7 +27,6 @@ namespace Kurs_Passman.Models
        
         public string Password { get; set; }                // Пароль акаунту на сайті
 
-        
         // використовується під час шифрування паролю за бажанням користувача
         public void Crypt(string secretKey)
         {

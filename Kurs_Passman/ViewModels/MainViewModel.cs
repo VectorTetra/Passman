@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Windows.Media;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -14,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Windows.Documents;
 using Kurs_Passman.Interfaces;
 using System.Threading;
+using System.Windows;
 
 namespace Kurs_Passman.ViewModels
 {
@@ -28,7 +30,9 @@ namespace Kurs_Passman.ViewModels
             Accounts = db.Accounts.Local.ToObservableCollection();
             SearchedAccounts = db.Accounts.Local.ToObservableCollection();
         }
+        // Database - context для взаємодії з БД
         PassManContext db;
+        // Контекст синхронізації
         SynchronizationContext _uiContext = SynchronizationContext.Current;
         // Accounts - повна колекція всіх акаунтів
         #region Accounts
@@ -46,7 +50,6 @@ namespace Kurs_Passman.ViewModels
         // SelectedAccount - посилання на обраний акаунт в списку акаунтів 
         #region SelectedAccount
         private Account _selectedAccount = null;
-
         public Account SelectedAccount
         {
             get { return _selectedAccount; }
@@ -54,9 +57,9 @@ namespace Kurs_Passman.ViewModels
             {
                 _selectedAccount = value;
                 OnPropertyChanged(nameof(SelectedAccount));
-                if(SelectedAccount != null) 
+                if (SelectedAccount != null)
                 { CryptButtonCaption = (SelectedAccount.Encrypted == 1 ? "Розшифрувати" : "Зашифрувати"); }
-                
+
             }
         }
         #endregion SelectedAccount
@@ -192,9 +195,12 @@ namespace Kurs_Passman.ViewModels
         #endregion IsOrderAscending
         #endregion Filters
 
+        // _dialogService - сервіс діалогових вікон для відображення сповіщень
         #region DialogService
         private readonly IDialogService _dialogService;
         #endregion DialogService
+
+        #region BindingStrings
 
         #region AddingAccount
 
@@ -254,6 +260,7 @@ namespace Kurs_Passman.ViewModels
             set
             {
                 _AddAccPassword = value;
+                //if (IsAddingPasswordMin8) { AddingPasswordMin8Color = new SolidColorBrush(Color.FromArgb(0,0,100,0)); }
                 OnPropertyChanged(nameof(AddAccPassword));
             }
         }
@@ -361,6 +368,329 @@ namespace Kurs_Passman.ViewModels
             }
         }
         #endregion SearchingExpression
+        #endregion BindingStrings
+
+        #region Password_Recommendations
+
+        public bool IsAddingPasswordRequirementsMet 
+        { 
+            get {
+                return IsAddingPasswordMin8 &
+                        IsAddingPasswordHasUppercase &
+                        IsAddingPasswordHasLowercase &
+                        IsAddingPasswordHasDigits &
+                        IsAddingPasswordHasSpecialChars;
+            } 
+        }
+        public bool IsUpdingPasswordRequirementsMet
+        {
+            get
+            {
+                return IsUpdingPasswordMin8 &
+                        IsUpdingPasswordHasUppercase &
+                        IsUpdingPasswordHasLowercase &
+                        IsUpdingPasswordHasDigits &
+                        IsUpdingPasswordHasSpecialChars;
+            }
+        }
+        #region IsPasswordRecommendationsEnabled
+        private bool _IsPasswordRecommendationsEnabled = false;
+
+        public bool IsPasswordRecommendationsEnabled
+        {
+            get { return _IsPasswordRecommendationsEnabled; }
+            set
+            {
+                _IsPasswordRecommendationsEnabled = value;
+                OnPropertyChanged(nameof(IsPasswordRecommendationsEnabled));
+            }
+        }
+
+        #endregion IsPasswordRecommendationsEnabled
+
+        #region AddingPasswordRecommendations
+
+        #region IsAddingPasswordMin8
+        public bool IsAddingPasswordMin8
+        {
+            get { return AddAccPassword.Length >= 8; }
+            
+        }
+        #endregion IsAddingPasswordMin8
+
+        #region IsAddingPasswordHasUppercase
+        public bool IsAddingPasswordHasUppercase
+        {
+            get { return AddAccPassword.Any(key => char.IsUpper(key)); }
+
+        }
+        #endregion IsAddingPasswordHasUppercase
+
+        #region IsAddingPasswordHasLowercase
+        public bool IsAddingPasswordHasLowercase
+        {
+            get { return AddAccPassword.Any(key => char.IsLower(key)); }
+
+        }
+        #endregion IsAddingPasswordHasLowercase
+
+        #region IsAddingPasswordHasDigits
+        public bool IsAddingPasswordHasDigits
+        {
+            get { return AddAccPassword.Any(key => char.IsDigit(key)); }
+
+        }
+        #endregion IsAddingPasswordHasDigits
+
+        #region IsAddingPasswordHasSpecialChars
+        public bool IsAddingPasswordHasSpecialChars
+        {
+            get { return AddAccPassword.Any(key => !char.IsLetterOrDigit(key)); }
+
+        }
+        #endregion IsAddingPasswordHasSpecialChars
+
+        #endregion AddingPasswordRecommendations
+
+        #region UpdingPasswordRecommendations
+
+        #region IsUpdingPasswordMin8
+        public bool IsUpdingPasswordMin8
+        {
+            get { return UpdAccPassword.Length >= 8; }
+
+        }
+        #endregion IsUpdingPasswordMin8
+
+        #region IsUpdingPasswordHasUppercase
+        public bool IsUpdingPasswordHasUppercase
+        {
+            get { return UpdAccPassword.Any(key => char.IsUpper(key)); }
+
+        }
+        #endregion IsUpdingPasswordHasUppercase
+
+        #region IsUpdingPasswordHasLowercase
+        public bool IsUpdingPasswordHasLowercase
+        {
+            get { return UpdAccPassword.Any(key => char.IsLower(key)); }
+
+        }
+        #endregion IsUpdingPasswordHasLowercase
+
+        #region IsUpdingPasswordHasDigits
+        public bool IsUpdingPasswordHasDigits
+        {
+            get { return UpdAccPassword.Any(key => char.IsDigit(key)); }
+
+        }
+        #endregion IsUpdingPasswordHasDigits
+
+        #region IsUpdingPasswordHasSpecialChars
+        public bool IsUpdingPasswordHasSpecialChars
+        {
+            get { return UpdAccPassword.Any(key => !char.IsLetterOrDigit(key)); }
+
+        }
+        #endregion IsUpdingPasswordHasSpecialChars
+
+        #endregion UpdingPasswordRecommendations
+
+        #region AddingPasswordColors
+
+        #region AddingPasswordMin8Color
+        public Brush AddingPasswordMin8Color 
+        {
+            get {
+                if (IsAddingPasswordMin8)
+                {
+                    return new SolidColorBrush(Color.FromArgb(255, 0, 100, 0));
+                }
+                else return new SolidColorBrush(Color.FromArgb(255, 139, 0, 0));
+                
+            }
+        }
+        #endregion AddingPasswordMin8Color
+
+        #region AddingPasswordHasUppercaseColor
+        public Brush AddingPasswordHasUppercaseColor
+        {
+            get
+            {
+                if (IsAddingPasswordHasUppercase)
+                {
+                    return new SolidColorBrush(Color.FromArgb(255, 0, 100, 0));
+                }
+                else return new SolidColorBrush(Color.FromArgb(255, 139, 0, 0));
+
+            }
+        }
+        #endregion AddingPasswordHasUppercaseColor
+
+        #region AddingPasswordHasLowercaseColor
+        public Brush AddingPasswordHasLowercaseColor
+        {
+            get
+            {
+                if (IsAddingPasswordHasLowercase)
+                {
+                    return new SolidColorBrush(Color.FromArgb(255, 0, 100, 0));
+                }
+                else return new SolidColorBrush(Color.FromArgb(255, 139, 0, 0));
+
+            }
+        }
+        #endregion AddingPasswordHasLowercaseColor
+
+        #region AddingPasswordHasDigitsColor
+        public Brush AddingPasswordHasDigitsColor
+        {
+            get
+            {
+                if (IsAddingPasswordHasDigits)
+                {
+                    return new SolidColorBrush(Color.FromArgb(255, 0, 100, 0));
+                }
+                else return new SolidColorBrush(Color.FromArgb(255, 139, 0, 0));
+
+            }
+        }
+        #endregion AddingPasswordHasDigitsColor
+
+        #region AddingPasswordHasSpecialCharsColor
+        public Brush AddingPasswordHasSpecialCharsColor
+        {
+            get
+            {
+                if (IsAddingPasswordHasSpecialChars)
+                {
+                    return new SolidColorBrush(Color.FromArgb(255, 0, 100, 0));
+                }
+                else return new SolidColorBrush(Color.FromArgb(255, 139, 0, 0));
+
+            }
+        }
+        #endregion AddingPasswordHasSpecialCharsColor
+
+        #endregion AddingPasswordColors
+
+        #region UpdingPasswordColors
+
+        #region UpdingPasswordMin8Color
+        public Brush UpdingPasswordMin8Color
+        {
+            get
+            {
+                if (IsUpdingPasswordMin8)
+                {
+                    return new SolidColorBrush(Color.FromArgb(255, 0, 100, 0));
+                }
+                else return new SolidColorBrush(Color.FromArgb(255, 139, 0, 0));
+
+            }
+        }
+        #endregion UpdingPasswordMin8Color
+
+        #region UpdingPasswordHasUppercaseColor
+        public Brush UpdingPasswordHasUppercaseColor
+        {
+            get
+            {
+                if (IsUpdingPasswordHasUppercase)
+                {
+                    return new SolidColorBrush(Color.FromArgb(255, 0, 100, 0));
+                }
+                else return new SolidColorBrush(Color.FromArgb(255, 139, 0, 0));
+
+            }
+        }
+        #endregion UpdingPasswordHasUppercaseColor
+
+        #region UpdingPasswordHasLowercaseColor
+        public Brush UpdingPasswordHasLowercaseColor
+        {
+            get
+            {
+                if (IsUpdingPasswordHasLowercase)
+                {
+                    return new SolidColorBrush(Color.FromArgb(255, 0, 100, 0));
+                }
+                else return new SolidColorBrush(Color.FromArgb(255, 139, 0, 0));
+
+            }
+        }
+        #endregion UpdingPasswordHasLowercaseColor
+
+        #region UpdingPasswordHasDigitsColor
+        public Brush UpdingPasswordHasDigitsColor
+        {
+            get
+            {
+                if (IsUpdingPasswordHasDigits)
+                {
+                    return new SolidColorBrush(Color.FromArgb(255, 0, 100, 0));
+                }
+                else return new SolidColorBrush(Color.FromArgb(255, 139, 0, 0));
+
+            }
+        }
+        #endregion UpdingPasswordHasDigitsColor
+
+        #region UpdingPasswordHasSpecialCharsColor
+        public Brush UpdingPasswordHasSpecialCharsColor
+        {
+            get
+            {
+                if (IsUpdingPasswordHasSpecialChars)
+                {
+                    return new SolidColorBrush(Color.FromArgb(255, 0, 100, 0));
+                }
+                else return new SolidColorBrush(Color.FromArgb(255, 139, 0, 0));
+
+            }
+        }
+        #endregion UpdingPasswordHasSpecialCharsColor
+
+        #endregion UpdingPasswordColors
+
+        #endregion Password_Recommendations
+
+        #region PasswordGeneration
+        #region IsOfferPasswordGeneration
+        private bool _IsOfferPasswordGeneration = false;
+
+        public bool IsOfferPasswordGeneration
+        {
+            get { return _IsOfferPasswordGeneration; }
+            set
+            {
+                _IsOfferPasswordGeneration = value;
+                OnPropertyChanged(nameof(IsOfferPasswordGeneration));
+                if (IsOfferPasswordGeneration)
+                {
+                    IsPasswordGenerationButtonsVisible = Visibility.Visible;
+                }
+                else IsPasswordGenerationButtonsVisible = Visibility.Collapsed;
+            }
+        }
+
+        #endregion IsOfferPasswordGeneration
+
+        #region IsPasswordGenerationButtonsVisible
+        public Visibility _IsPasswordGenerationButtonsVisible = Visibility.Collapsed;
+        public Visibility IsPasswordGenerationButtonsVisible
+        {
+            get { return _IsPasswordGenerationButtonsVisible; }
+            set 
+            {
+                _IsPasswordGenerationButtonsVisible = value;
+                OnPropertyChanged(nameof(IsPasswordGenerationButtonsVisible));
+            }
+            
+        }
+        #endregion IsPasswordGenerationButtonsVisible
+
+        #endregion PasswordGeneration
 
         #region Commands
 
@@ -398,13 +728,20 @@ namespace Kurs_Passman.ViewModels
                                 }
                                 catch (Exception ex)
                                 {
-                                    _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message,ex.GetType().ToString()); }, null);
+                                    _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message, ex.GetType().ToString()); }, null);
                                 }
                             });
                         },
                         d =>
                         {
-                            return (AddAccAddress.Length > 0 &&
+                            if (IsPasswordRecommendationsEnabled)
+                            {
+                                return (AddAccAddress.Length > 0 &
+                                AddAccLogin.Length > 0 &
+                                AddAccName.Length > 0 &
+                                IsAddingPasswordRequirementsMet);
+                            }
+                            else return (AddAccAddress.Length > 0 &&
                                 AddAccLogin.Length > 0 &&
                                 AddAccName.Length > 0 &&
                                 AddAccPassword.Length > 0);
@@ -483,7 +820,7 @@ namespace Kurs_Passman.ViewModels
                             }
                             catch (Exception ex)
                             {
-                                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message,ex.GetType().ToString()); }, null);
+                                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message, ex.GetType().ToString()); }, null);
                             }
 
                         }, null);
@@ -508,7 +845,7 @@ namespace Kurs_Passman.ViewModels
                             {
                                 await Task.Run(() =>
                                 {
-                                    if (_dialogService.ConfirmDialog("Ви точно хочете відредагувати обраний акаунт?","Підтвердження редагування"))
+                                    if (_dialogService.ConfirmDialog("Ви точно хочете відредагувати обраний акаунт?", "Підтвердження редагування"))
                                     {
                                         SelectedAccount.SiteName = UpdAccName.ToString();
                                         SelectedAccount.SiteAddress = UpdAccAddress.ToString();
@@ -522,10 +859,9 @@ namespace Kurs_Passman.ViewModels
                                         //_uiContext.Send(d => { OnPropertyChanged(nameof(SearchedAccounts)); }, null);
                                         //OnPropertyChanged(nameof(SearchedAccounts));
                                         SearchedAccounts = new(SearchedAccounts);
-                                        if (SelectedAccount == null && SearchedAccounts.Count > 0)
-                                        {
-                                            SelectedAccount = SearchedAccounts[SearchedAccounts.Count - 1];
-                                        }
+                                        var sel = SelectedAccount;
+                                        SelectedAccount = null;
+                                        SelectedAccount = sel;
                                     }
                                 });
                             }
@@ -535,7 +871,23 @@ namespace Kurs_Passman.ViewModels
                             }
 
                         },
-                        d => { return SelectedAccount != null; });
+                        d => 
+                        {
+                            if (IsPasswordRecommendationsEnabled)
+                            {
+                                return (UpdAccAddress.Length > 0 &
+                                UpdAccLogin.Length > 0 &
+                                UpdAccName.Length > 0 &
+                                IsUpdingPasswordRequirementsMet &
+                                SelectedAccount != null);
+                            }
+                            else return (UpdAccAddress.Length > 0 &
+                                UpdAccLogin.Length > 0 &
+                                UpdAccName.Length > 0 &
+                                UpdAccPassword.Length > 0 &
+                                SelectedAccount != null);
+
+                        });
                 }
                 return upd_account_command;
             }
@@ -559,16 +911,17 @@ namespace Kurs_Passman.ViewModels
                             {
                                 _uiContext.Send(del =>
                                 {
-                                    if (_dialogService.ConfirmDialog("Ви точно хочете видалити обраний акаунт?","Підтвердження видалення"))
+                                    if (_dialogService.ConfirmDialog("Ви точно хочете видалити обраний акаунт?", "Підтвердження видалення"))
                                     {
                                         db.Accounts.Remove(SelectedAccount);
                                         db.SaveChangesAsync();
                                     }
+                                    if (SelectedAccount == null && SearchedAccounts.Count > 0)
+                                    {
+                                        SelectedAccount = SearchedAccounts[SearchedAccounts.Count - 1];
+                                    }
                                 }, null);
-                                if (SelectedAccount == null && SearchedAccounts.Count > 0)
-                                {
-                                    SelectedAccount = SearchedAccounts[SearchedAccounts.Count - 1];
-                                }
+
                             });
                         }
                         catch (Exception ex)
@@ -604,26 +957,27 @@ namespace Kurs_Passman.ViewModels
                                 string message = SelectedAccount.Encrypted == 1 ?
                                     "Ви точно хочете розшифрувати пароль обраного акаунту?" :
                                     "Ви точно хочете зашифрувати пароль обраного акаунту?";
-                                if (_dialogService.ConfirmDialog(message,"Підтвердження"))
+                                if (_dialogService.ConfirmDialog(message, "Підтвердження"))
                                 {
                                     SelectedAccount.Crypt(SecretKey);
                                     _uiContext.Send(del =>
                                     {
                                         db.Entry(SelectedAccount).State = EntityState.Modified;
                                         db.SaveChangesAsync();
+                                        SelectedAccount = SelectedAccount;
+                                        SecretKey = "";
                                     }, null);
-                                    SelectedAccount = SelectedAccount;
-                                    SecretKey = "";
+                                    
                                 }
                             });
                         }
-                        catch(System.Security.Cryptography.CryptographicException ex)
+                        catch (System.Security.Cryptography.CryptographicException ex)
                         {
                             _uiContext.Send(d => { _dialogService.MessageDialog("Введено неправильний ключ шифрування!", "Помилка шифрування"); }, null);
                         }
                         catch (Exception ex)
                         {
-                            _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message,ex.GetType().ToString()); }, null);
+                            _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message, ex.GetType().ToString()); }, null);
                         }
 
                     },
@@ -636,6 +990,76 @@ namespace Kurs_Passman.ViewModels
             }
         }
         #endregion Command_CryptPassword
+
+        #region Command_GenerateAddingPassword
+        private DelegateCommand generate_adding_password_command = null;
+        public ICommand GenerateAddingPasswordCommand
+        {
+            get
+            {
+                if (generate_adding_password_command == null)
+                {
+                    generate_adding_password_command = new DelegateCommand(
+                    async d =>
+                    {
+                        try
+                        {
+                            await Task.Run(() =>
+                            {
+                                
+                                _uiContext.Send(del =>
+                                {
+                                    AddAccPassword = AesOperation.GetRandomPasswordString();
+                                }, null);
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message, ex.GetType().ToString()); }, null);
+                        }
+
+                    },
+                   null);
+                }
+                return generate_adding_password_command;
+            }
+        }
+        #endregion Command_GenerateAddingPassword
+
+        #region Command_GenerateUpdingPassword
+        private DelegateCommand generate_upding_password_command = null;
+        public ICommand GenerateUpdingPasswordCommand
+        {
+            get
+            {
+                if (generate_upding_password_command == null)
+                {
+                    generate_upding_password_command = new DelegateCommand(
+                    async d =>
+                    {
+                        try
+                        {
+                            await Task.Run(() =>
+                            {
+
+                                _uiContext.Send(del =>
+                                {
+                                    UpdAccPassword = AesOperation.GetRandomPasswordString();
+                                }, null);
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message, ex.GetType().ToString()); }, null);
+                        }
+
+                    },
+                   null);
+                }
+                return generate_upding_password_command;
+            }
+        }
+        #endregion Command_GenerateUpdingPassword
         #endregion Commands
 
         #region Methods
@@ -650,53 +1074,54 @@ namespace Kurs_Passman.ViewModels
                     // Він необхідний, щоб отримати випадково згенерований ключ шифрування
                     var cipherKey = AesOperation.GetRandomString();
                     string crypted_pass = string.Empty;
-                    _uiContext.Send(d => { 
-                    
-                    Login_Stat.Clear();
-                    Password_Stat.Clear();
-                    Login_Password_Stat.Clear();
-                    foreach (var item in Accounts)
+                    _uiContext.Send(d =>
                     {
-                        // Якщо немає акаунтів з таким логіном - додати, якщо є - збільшити лічильник на 1
-                        if (!Login_Stat.ContainsKey(item.Login))
-                        {
-                            Login_Stat.TryAdd(item.Login, 1);
-                        }
-                        else
-                        {
-                            Login_Stat[item.Login] += 1;
-                        }
-                        // Якщо немає акаунтів з таким паролем - додати, якщо є - збільшити лічильник на 1
-                        crypted_pass = AesOperation.EncryptString(cipherKey, item.Password);
-                        if (!Password_Stat.ContainsKey(crypted_pass))
-                        {
-                            Password_Stat.TryAdd(crypted_pass, 1);
-                        }
-                        else
-                        {
-                            Password_Stat[crypted_pass] += 1;
-                        }
 
-                        List<string> pair = new List<string>() { item.Login, crypted_pass };
-                        // Якщо немає акаунтів з такими логіном і паролем - додати, якщо є - збільшити лічильник на 1
-                        if (!Login_Password_Stat.Keys.Any(key => key.SequenceEqual(pair)))
+                        Login_Stat.Clear();
+                        Password_Stat.Clear();
+                        Login_Password_Stat.Clear();
+                        foreach (var item in Accounts)
                         {
-                            Login_Password_Stat.TryAdd(pair, 1);
+                            // Якщо немає акаунтів з таким логіном - додати, якщо є - збільшити лічильник на 1
+                            if (!Login_Stat.ContainsKey(item.Login))
+                            {
+                                Login_Stat.TryAdd(item.Login, 1);
+                            }
+                            else
+                            {
+                                Login_Stat[item.Login] += 1;
+                            }
+                            // Якщо немає акаунтів з таким паролем - додати, якщо є - збільшити лічильник на 1
+                            crypted_pass = AesOperation.EncryptString(cipherKey, item.Password);
+                            if (!Password_Stat.ContainsKey(crypted_pass))
+                            {
+                                Password_Stat.TryAdd(crypted_pass, 1);
+                            }
+                            else
+                            {
+                                Password_Stat[crypted_pass] += 1;
+                            }
+
+                            List<string> pair = new List<string>() { item.Login, crypted_pass };
+                            // Якщо немає акаунтів з такими логіном і паролем - додати, якщо є - збільшити лічильник на 1
+                            if (!Login_Password_Stat.Keys.Any(key => key.SequenceEqual(pair)))
+                            {
+                                Login_Password_Stat.TryAdd(pair, 1);
+                            }
+                            else
+                            {
+                                Parallel.ForEach(Login_Password_Stat.Keys, (kk) => { if (kk.SequenceEqual(pair)) { Login_Password_Stat[kk] += 1; } });
+                            }
                         }
-                        else
-                        {
-                            Parallel.ForEach(Login_Password_Stat.Keys, (kk) => { if (kk.SequenceEqual(pair)) { Login_Password_Stat[kk] += 1; } });
-                        }
-                    }
-                    Login_Stat = new(Login_Stat);
-                    Password_Stat = new(Password_Stat);
-                    Login_Password_Stat = new(Login_Password_Stat);
+                        Login_Stat = new(Login_Stat);
+                        Password_Stat = new(Password_Stat);
+                        Login_Password_Stat = new(Login_Password_Stat);
                     }, null);
                 });
             }
             catch (Exception ex)
             {
-                _uiContext.Send(d => { _dialogService.MessageDialog(ex.InnerException.Message,"Помилка!"); }, null);
+                _uiContext.Send(d => { _dialogService.MessageDialog(ex.InnerException.Message, "Помилка!"); }, null);
             }
         }
 
@@ -719,7 +1144,7 @@ namespace Kurs_Passman.ViewModels
             }
             catch (Exception ex)
             {
-                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message,ex.GetType().ToString()); }, null);
+                _uiContext.Send(d => { _dialogService.MessageDialog(ex.Message, ex.GetType().ToString()); }, null);
             }
         }
         // Видалення акаунту у вкладці "Оновлення акаунту" відбувається через callback у обробнику події натискання на кнопку із підтвердженням

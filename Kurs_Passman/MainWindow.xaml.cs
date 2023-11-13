@@ -74,5 +74,11 @@ namespace Kurs_Passman
         {
             e.Handled = true;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow wf = new SettingsWindow(mvmod, this);
+            wf.ShowDialog();
+        }
     }
 }

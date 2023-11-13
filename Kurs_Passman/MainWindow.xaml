@@ -21,12 +21,34 @@
         <conv:HeightConverter x:Key="hconv"/>
     </Window.Resources>
 
+
     <Grid Background="Bisque">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.05*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.3*"/>
             <ColumnDefinition Width="0.6*"/>
         </Grid.ColumnDefinitions>
-        <Grid>
+        <!--Style="{DynamicResource MaterialDesignMenu}" -->
+        <!--materialDesign:MenuAssist.TopLevelMenuItemHeight="120"-->
+
+        <Viewbox HorizontalAlignment="Left">
+            <ToolBar Height="20" Margin="5,0,5,0" ToolBarTray.IsLocked="True">
+                <Button Padding="0">
+                    <Image Source="Resources/colors-icon.png"></Image>
+                </Button>
+                <Button Padding="0" Margin="5,0,0,0" Click="Button_Click">
+                    <Image Source="Resources/settings-icon.png"></Image>
+                </Button>
+            </ToolBar>
+        </Viewbox>
+
+
+
+
+        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.4*"/>
                 <RowDefinition/>
@@ -42,7 +64,8 @@
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                          FontSize="{Binding ElementName=PassManWindow,Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=32}"
                          Text="{Binding SearchingExpression}"
-                         materialDesign:HintAssist.Hint="Введіть дані для пошуку"/>
+                         materialDesign:HintAssist.Hint="Введіть дані для пошуку"
+                             />
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -107,7 +130,7 @@
             </materialDesign:Card>
 
         </Grid>
-        <Grid Grid.Column="1" Margin="5" Background="LightGoldenrodYellow">
+        <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="5" Background="LightGoldenrodYellow">
 
             <TabControl SelectionChanged="TabControl_SelectionChanged" Name="MainTabControl" SelectedIndex="1">
                 <TabControl.Template>
@@ -245,18 +268,29 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Viewbox>
-
                             <TextBlock Margin="5" Text="Назва сайту" />
                         </Viewbox>
                         <Viewbox Grid.Row="1">
                             <TextBlock Margin="5" Text="Адреса сайту"/>
                         </Viewbox>
-                        <Viewbox Grid.Row="2">
+                        <Viewbox Grid.Row="2" >
                             <TextBlock Margin="5" Text="Логін"/>
                         </Viewbox>
-                        <Viewbox Grid.Row="3">
-                            <TextBlock Margin="5" Text="Пароль"/>
-                        </Viewbox>
+                        <Grid Grid.Row="3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Viewbox>
+                                <TextBlock Margin="5" Text="Пароль"/>
+                            </Viewbox>
+                            <Button Grid.Column="1" Margin="5" 
+                                    Visibility="{Binding IsPasswordGenerationButtonsVisible}" 
+                                    Command="{Binding GenerateAddingPasswordCommand}">
+                                <TextBlock TextWrapping="Wrap">Згенерувати</TextBlock>
+                            </Button>
+                        </Grid>
+                        
                         <Viewbox Grid.Row="4" Grid.ColumnSpan="2">
                             <TextBlock Margin="5" Text="Опис сайту (необов'язково)"/>
                         </Viewbox>
@@ -286,14 +320,29 @@
                         <!--res:PasswordHelper.Attach="true" res:PasswordHelper.Password="{Binding AddAccPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"-->
                         <!---->
                         <PasswordBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="3" 
-                                 Style="{StaticResource ResourceKey=MaterialDesignRevealPasswordBox}" materialDesign:HintAssist.Hint="Введіть пароль до акаунту" 
-                                 Name="AddSitePassword" 
+                                 Style="{StaticResource ResourceKey=MaterialDesignRevealPasswordBox}" 
+                                 Name="AddSitePassword"     
                                  materialDesign:PasswordBoxAssist.Password="{Binding AddAccPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                  materialDesign:PasswordBoxAssist.PasswordMaskedIcon="Eye"
                                  materialDesign:PasswordBoxAssist.IsPasswordRevealed="False"
                                  materialDesign:PasswordBoxAssist.PasswordRevealedIcon="EyeShut"
+                                 materialDesign:HintAssist.Hint="Введіть пароль до акаунту"
                                  FontSize="{Binding ElementName=PassManWindow,Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"
-                                 VerticalContentAlignment="Center"/>
+                                 VerticalContentAlignment="Center"
+                                 ToolTipService.IsEnabled="{Binding IsPasswordRecommendationsEnabled}"
+                                 ToolTipService.InitialShowDelay="0"
+                                 ToolTipService.Placement="Bottom"
+                                 ToolTipService.ShowsToolTipOnKeyboardFocus="{Binding IsPasswordRecommendationsEnabled}">
+                            <PasswordBox.ToolTip>
+                                <StackPanel>
+                                    <TextBlock FontSize="14" Foreground="{Binding AddingPasswordMin8Color}" Background="LightCyan"> • Мінімум 8 символів</TextBlock>
+                                    <TextBlock FontSize="14" Foreground="{Binding AddingPasswordHasUppercaseColor}" Background="LightCyan"> • Використано великі букви [A-Z, А-Я]</TextBlock>
+                                    <TextBlock FontSize="14" Foreground="{Binding AddingPasswordHasLowercaseColor}" Background="LightCyan"> • Використано малі букви [a-z, а-я]</TextBlock>
+                                    <TextBlock FontSize="14" Foreground="{Binding AddingPasswordHasSpecialCharsColor}" Background="LightCyan"> • Використано спецсимволи [@,#,$, і т.п.]</TextBlock>
+                                    <TextBlock FontSize="14" Foreground="{Binding AddingPasswordHasDigitsColor}" Background="LightCyan"> • Використано цифри [0-9]</TextBlock>
+                                </StackPanel>
+                            </PasswordBox.ToolTip>
+                        </PasswordBox>
                         <ScrollViewer Grid.Row="5" Grid.ColumnSpan="2" Margin="5">
                             <TextBox Margin="5" Name="AddSiteDescription" Background="Transparent" FontSize="20" 
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
@@ -344,9 +393,20 @@
                         <Viewbox Grid.Row="2">
                             <TextBlock Margin="5" Text="Логін"/>
                         </Viewbox>
-                        <Viewbox Grid.Row="3">
-                            <TextBlock Margin="5" Text="Пароль"/>
-                        </Viewbox>
+                        <Grid Grid.Row="3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Viewbox>
+                                <TextBlock Margin="5" Text="Пароль"/>
+                            </Viewbox>
+                            <Button Grid.Column="1" Margin="5" 
+                                    Visibility="{Binding IsPasswordGenerationButtonsVisible}" 
+                                    Command="{Binding GenerateUpdingPasswordCommand}">
+                                <TextBlock TextWrapping="Wrap">Згенерувати</TextBlock>
+                            </Button>
+                        </Grid>
                         <Viewbox Grid.Row="4" Grid.ColumnSpan="2">
                             <TextBlock Margin="5" Text="Опис сайту (необов'язково)"/>
                         </Viewbox>
@@ -369,7 +429,21 @@
                                  materialDesign:PasswordBoxAssist.IsPasswordRevealed="False"
                                  materialDesign:PasswordBoxAssist.PasswordRevealedIcon="EyeShut"
                                  FontSize="{Binding ElementName=PassManWindow,Path= ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"
-                                 VerticalContentAlignment="Center"/>
+                                 VerticalContentAlignment="Center"
+                                 ToolTipService.IsEnabled="{Binding IsPasswordRecommendationsEnabled}"
+                                 ToolTipService.InitialShowDelay="0"
+                                 ToolTipService.Placement="Bottom"
+                                 ToolTipService.ShowsToolTipOnKeyboardFocus="{Binding IsPasswordRecommendationsEnabled}">
+                            <PasswordBox.ToolTip>
+                                <StackPanel>
+                                    <TextBlock FontSize="14" Foreground="{Binding UpdingPasswordMin8Color}" Background="LightCyan"> • Мінімум 8 символів</TextBlock>
+                                    <TextBlock FontSize="14" Foreground="{Binding UpdingPasswordHasUppercaseColor}" Background="LightCyan"> • Використано великі букви [A-Z, А-Я]</TextBlock>
+                                    <TextBlock FontSize="14" Foreground="{Binding UpdingPasswordHasLowercaseColor}" Background="LightCyan"> • Використано малі букви [a-z, а-я]</TextBlock>
+                                    <TextBlock FontSize="14" Foreground="{Binding UpdingPasswordHasSpecialCharsColor}" Background="LightCyan"> • Використано спецсимволи [@,#,$, і т.п.]</TextBlock>
+                                    <TextBlock FontSize="14" Foreground="{Binding UpdingPasswordHasDigitsColor}" Background="LightCyan"> • Використано цифри [0-9]</TextBlock>
+                                </StackPanel>
+                            </PasswordBox.ToolTip>
+                        </PasswordBox>
                         <Grid Grid.Row="6" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>

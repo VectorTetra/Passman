@@ -1,0 +1,40 @@
+﻿<Window x:Class="Kurs_Passman.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:Kurs_Passman"
+        mc:Ignorable="d"
+        Title="Налаштування" Height="300" Width="200"
+        Name="PassManWindow"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        Background="{DynamicResource MaterialDesignBackground}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        >
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="42"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <CheckBox IsChecked="{Binding IsPasswordRecommendationsEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock TextWrapping="Wrap">Вимагати дотримання рекомендацій для створення сильного пароля</TextBlock>
+            </CheckBox>
+            <Separator Background="AliceBlue"></Separator>
+            <CheckBox IsChecked="{Binding IsOfferPasswordGeneration,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
+                <TextBlock TextWrapping="Wrap">Пропонувати генерацію пароля</TextBlock>
+            </CheckBox>
+        </StackPanel>
+        <DockPanel Grid.Row="1" LastChildFill="False">
+            <Button DockPanel.Dock="Right" Padding="5,0,5,0" Margin="5" Name="ButtonSave" Click="ButtonSave_Click">Зберегти</Button>
+        </DockPanel>
+    </Grid>
+</Window>

@@ -10,12 +10,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\colors-icon.png" />
+    <None Remove="Resources\settings-icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Resources\Passman_Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\colors-icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\settings-icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
