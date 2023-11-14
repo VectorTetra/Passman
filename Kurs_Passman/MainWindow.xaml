@@ -7,22 +7,24 @@
         xmlns:mod="clr-namespace:Kurs_Passman.ViewModels"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="PassMan" MinHeight="530" MinWidth="910"  
+        Title="PassMan" MinHeight="570" MinWidth="910"  
         Name="PassManWindow"
-         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+         
          TextElement.FontWeight="Regular"
          TextElement.FontSize="13"
          TextOptions.TextFormattingMode="Ideal"
          TextOptions.TextRenderingMode="Auto"
-         Background="{DynamicResource MaterialDesignBackground}"
-         FontFamily="{DynamicResource MaterialDesignFont}"
+        Style="{DynamicResource MaterialDesignWindow}"
         >
+        <!--TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+         Background="{DynamicResource MaterialDesignBackground}"
+         FontFamily="{DynamicResource MaterialDesignFont}"-->
     <Window.Resources>
         <conv:HeightConverter x:Key="hconv"/>
     </Window.Resources>
 
 
-    <Grid Background="Bisque">
+    <Grid Background="{DynamicResource MaterialDesignBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.05*"/>
             <RowDefinition/>
@@ -31,12 +33,10 @@
             <ColumnDefinition Width="0.3*"/>
             <ColumnDefinition Width="0.6*"/>
         </Grid.ColumnDefinitions>
-        <!--Style="{DynamicResource MaterialDesignMenu}" -->
-        <!--materialDesign:MenuAssist.TopLevelMenuItemHeight="120"-->
 
         <Viewbox HorizontalAlignment="Left">
             <ToolBar Height="20" Margin="5,0,5,0" ToolBarTray.IsLocked="True">
-                <Button Padding="0">
+                <Button Padding="0" Click="Button_Click_1">
                     <Image Source="Resources/colors-icon.png"></Image>
                 </Button>
                 <Button Padding="0" Margin="5,0,0,0" Click="Button_Click">
@@ -53,8 +53,10 @@
                 <RowDefinition Height="0.4*"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <materialDesign:Card Margin="5">
-                <Grid Background="Lavender">
+            <materialDesign:Card Margin="5" 
+                                 Background="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                 Foreground="{DynamicResource MaterialDesignPaper}">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.65*"/>
                         <RowDefinition/>
@@ -76,7 +78,11 @@
                             <RowDefinition/>
                             <RowDefinition Height="2*"/>
                         </Grid.RowDefinitions>
-                        <CheckBox Margin="5,0,0,0"  VerticalContentAlignment="Center" IsChecked="{Binding IsSearchByLogin}">
+                        <CheckBox Margin="5,0,0,0"  VerticalContentAlignment="Center" 
+                                  IsChecked="{Binding IsSearchByLogin}"
+                                  BorderBrush="{DynamicResource MaterialDesignPaper}"
+                                  
+                                  >
                             <Viewbox>
                                 <TextBlock >По Логіну</TextBlock>
                             </Viewbox>
@@ -96,7 +102,7 @@
                                 <TextBlock >По опису сайту</TextBlock>
                             </Viewbox>
                         </CheckBox>
-                        <Button Margin="5" Grid.Row="2" Grid.ColumnSpan="2" Background="LimeGreen"
+                        <Button Margin="5" Grid.Row="2" Grid.ColumnSpan="2" Background="LimeGreen" BorderBrush="Lime"
                             Command="{Binding SearchAccountsCommand}">
                             <Viewbox>
                                 <TextBlock >Пошук</TextBlock>
@@ -105,9 +111,11 @@
                     </Grid>
                 </Grid>
             </materialDesign:Card>
-            <materialDesign:Card Margin="5" Grid.Row="1">
-                <ListBox  Background="Beige" ItemsSource="{Binding SearchedAccounts}" SelectedItem="{Binding SelectedAccount}"
-                     SelectionChanged="ListBox_SelectionChanged">
+            <materialDesign:Card Margin="5" Grid.Row="1" 
+                                 Background="{DynamicResource MaterialDesignSnackbarBackground}"
+                                 >
+                <ListBox ItemsSource="{Binding SearchedAccounts}" SelectedItem="{Binding SelectedAccount}"
+                     SelectionChanged="ListBox_SelectionChanged" Foreground="{DynamicResource MaterialDesignPaper}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -130,9 +138,13 @@
             </materialDesign:Card>
 
         </Grid>
-        <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="5" Background="LightGoldenrodYellow">
+        <!--Background="{DynamicResource MaterialDesignSnackbarRipple}"-->
+        <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="5" Background="{DynamicResource MaterialDesignSnackbarRipple}">
 
-            <TabControl SelectionChanged="TabControl_SelectionChanged" Name="MainTabControl" SelectedIndex="1">
+            <TabControl SelectionChanged="TabControl_SelectionChanged" 
+                        Name="MainTabControl" SelectedIndex="1" 
+                        Foreground="{DynamicResource MaterialDesignPaper}"
+                        >
                 <TabControl.Template>
                     <ControlTemplate TargetType="TabControl">
                         <DockPanel>
@@ -142,11 +154,11 @@
                     </ControlTemplate>
                 </TabControl.Template>
 
-                <TabItem Style="{StaticResource MaterialDesignTabItem}" Name="TabItemAccountInfo" IsEnabled="False">
+                <TabItem Name="TabItemAccountInfo" Visibility="Collapsed">
                     <TabItem.Header>
                         <Viewbox>
                             <StackPanel Orientation="Vertical" Margin="-8,-8">
-                                <materialDesign:PackIcon Kind="Info" 
+                                <materialDesign:PackIcon Kind="Info"
                                                  Width="{Binding ElementName=PassManWindow,Path=ActualWidth,Converter={StaticResource hconv}, ConverterParameter=25}" 
                                                  Height="{Binding ElementName=PassManWindow,Path=ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"
                                                  MaxHeight="24"
@@ -168,40 +180,41 @@
                             <RowDefinition/>
                             <RowDefinition Height="4*"/>
                         </Grid.RowDefinitions>
-                        <Border Background="AliceBlue">
+                        <Border Background="{DynamicResource MaterialDesignValidationErrorBrush}">
                             <Viewbox>
                                 <TextBlock Margin="5" Text="Назва сайту" />
                             </Viewbox>
                         </Border>
-                        <Border Grid.Row="1" Background="PaleGreen">
+                        <Border Grid.Row="1" Background="{DynamicResource MaterialDesignSnackbarBackground}">
                             <Viewbox>
                                 <TextBlock Margin="5" Text="Адреса сайту"/>
                             </Viewbox>
                         </Border>
-                        <Border Grid.Row="2" Background="LightPink">
+                        <Border Grid.Row="2" Background="{DynamicResource MaterialDesignValidationErrorBrush}">
                             <Viewbox Grid.Row="2">
                                 <TextBlock Margin="5" Text="Логін"/>
                             </Viewbox>
                         </Border>
-                        <Border Grid.Row="3" Background="LightSkyBlue">
+                        <Border Grid.Row="3" Background="{DynamicResource MaterialDesignSnackbarBackground}">
                             <Viewbox Grid.Row="3">
                                 <TextBlock Margin="5" Text="Пароль"/>
                             </Viewbox>
                         </Border>
-                        <Border Grid.Row="4" Grid.ColumnSpan="2" Background="LightYellow">
+                        <Border Grid.Row="4" Grid.ColumnSpan="2" >
                             <Viewbox >
                                 <TextBlock Margin="5" Text="Опис сайту"/>
                             </Viewbox>
                         </Border>
-                        <Border Grid.Row="5" Grid.ColumnSpan="2" Background="LightYellow">
+                        <Border Grid.Row="5" Grid.ColumnSpan="2">
                             <ScrollViewer Grid.Row="5" Grid.ColumnSpan="2" Margin="5">
                                 <TextBox Margin="5" Name="InfoSiteDescription" Text="{Binding SelectedAccount.SiteDescription, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                          TextWrapping="Wrap"
                                          Focusable="False" FontSize="20"
                                            />
                             </ScrollViewer >
                         </Border>
-                        <Border Grid.Column="1" Background="AliceBlue">
+                        <Border Grid.Column="1" Background="{DynamicResource MaterialDesignValidationErrorBrush}">
 
                             <TextBlock Margin="5" Name="InfoSiteName" VerticalAlignment="Center"
                                            Text="{Binding SelectedAccount.SiteName, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"
@@ -209,27 +222,28 @@
                                         />
 
                         </Border>
-                        <Border Grid.Column="1" Grid.Row="1" Background="PaleGreen">
+                        <Border Grid.Column="1" Grid.Row="1" Background="{DynamicResource MaterialDesignSnackbarBackground}">
 
                             <TextBlock Margin="5" Name="InfoSiteAddress" VerticalAlignment="Center"
                                            Text="{Binding SelectedAccount.SiteAddress, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"
                                            FontSize="{Binding ElementName=PassManWindow,Path=ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"/>
 
                         </Border>
-                        <Border Grid.Column="1" Grid.Row="2" Background="LightPink">
+                        <Border Grid.Column="1" Grid.Row="2" Background="{DynamicResource MaterialDesignValidationErrorBrush}">
 
                             <TextBlock Margin="5" Name="InfoSiteLogin" VerticalAlignment="Center"
                                            Text="{Binding SelectedAccount.Login, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"
                                            FontSize="{Binding ElementName=PassManWindow,Path=ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"/>
 
                         </Border>
-                        <Border Grid.Column="1" Grid.Row="3" Background="LightSkyBlue" Name="PassBorder">
+                        <Border Grid.Column="1" Grid.Row="3" Name="PassBorder" Background="{DynamicResource MaterialDesignSnackbarBackground}">
 
                             <PasswordBox Margin="5" Grid.Column="1" Background="Transparent" Grid.Row="3" 
                                          PreviewKeyDown="InfoSitePassword_PreviewKeyDown"
                                          Focusable="False"
-                                         Style="{StaticResource ResourceKey=MaterialDesignRevealPasswordBox}" 
+                                         Style="{DynamicResource ResourceKey=MaterialDesignRevealPasswordBox}" 
                                          Name="InfoSitePassword" 
+                                         
                                          FontSize="{Binding ElementName=PassManWindow,Path=ActualHeight,Converter={StaticResource hconv}, ConverterParameter=20}"
                                          materialDesign:PasswordBoxAssist.Password="{Binding SelectedAccount.Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                          materialDesign:PasswordBoxAssist.PasswordMaskedIcon="Eye"
@@ -240,7 +254,7 @@
                         </Border>
                     </Grid>
                 </TabItem>
-                <TabItem>
+                <TabItem >
                     <TabItem.Header>
                         <Viewbox>
                             <StackPanel Orientation="Vertical" Margin="-8,-8">
@@ -357,7 +371,7 @@
 
                     </Grid>
                 </TabItem>
-                <TabItem  Name="TabUpdDelAcc" IsEnabled="False">
+                <TabItem  Name="TabUpdDelAcc" Visibility="Collapsed">
                     <TabItem.Header>
                         <Viewbox>
                             <StackPanel Orientation="Vertical" Margin="-8,-8">
@@ -461,7 +475,8 @@
 
                     </Grid>
                 </TabItem>
-                <TabItem Name="TabStatistics" IsEnabled="False">
+                <TabItem Name="TabStatistics" Visibility="Collapsed" Foreground="{DynamicResource MaterialDesignPaper}"
+                        Background="{DynamicResource MaterialDesignSnackbarRipple}">
                     <TabItem.Header>
                         <Viewbox>
                             <StackPanel Orientation="Vertical" Margin="-8,-8">
@@ -477,13 +492,15 @@
                     <TabControl>
                         <TabItem Header="Статистика логінів">
                             <DataGrid x:Name="DataGridLoginStat" ItemsSource="{Binding Login_Stat}"
-                                          AutoGenerateColumns="False"
-                                          GridLinesVisibility="All" 
-                                          Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue"
-                                          HorizontalScrollBarVisibility="Auto"  
-                                          VerticalScrollBarVisibility="Auto"
-                                          RowStyle="{DynamicResource DataGridRowNonSelectable}"
-                                          HeadersVisibility="Column"
+                                        AutoGenerateColumns="False"
+                                        GridLinesVisibility="All" HeadersVisibility="Column"
+                                        RowBackground="{DynamicResource MaterialDesignSnackbarRipple}" 
+                                        AlternatingRowBackground="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                        Background="{DynamicResource MaterialDesignSnackbarBackground}"
+                                        Foreground="{DynamicResource MaterialDesignPaper}"
+                                        HorizontalScrollBarVisibility="Auto"  
+                                        VerticalScrollBarVisibility="Auto"
+                                        RowStyle="{DynamicResource DataGridRowNonSelectable}"
                                           >
                                 <DataGrid.Columns >
                                     <DataGridTextColumn Header="Логін" Binding="{Binding Key}"></DataGridTextColumn>
@@ -493,13 +510,17 @@
                         </TabItem>
                         <TabItem Header="Статистика паролів">
                             <DataGrid x:Name="DataGridPasswordStat" ItemsSource="{Binding Password_Stat}"
-                                          AutoGenerateColumns="False"
-                                          GridLinesVisibility="All" HeadersVisibility="Column"
-                                          Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue"
-                                          HorizontalScrollBarVisibility="Auto"  
-                                          VerticalScrollBarVisibility="Auto"
-                                          RowStyle="{DynamicResource DataGridRowNonSelectable}"
+                                        AutoGenerateColumns="False"
+                                        GridLinesVisibility="All" HeadersVisibility="Column"
+                                        RowBackground="{DynamicResource MaterialDesignSnackbarRipple}" 
+                                        AlternatingRowBackground="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                        Background="{DynamicResource MaterialDesignSnackbarBackground}"
+                                        Foreground="{DynamicResource MaterialDesignPaper}"
+                                        HorizontalScrollBarVisibility="Auto"  
+                                        VerticalScrollBarVisibility="Auto"
+                                        RowStyle="{DynamicResource DataGridRowNonSelectable}"
                                       >
+                                          <!--Foreground="{DynamicResource SecondaryHueMidForegroundBrush}"--> 
                                 <DataGrid.Columns >
                                     <materialDesign:DataGridTextColumn Header="Пароль" Binding="{Binding Key}"></materialDesign:DataGridTextColumn>
                                     <materialDesign:DataGridTextColumn Header="Кількість" Binding="{Binding Value}"></materialDesign:DataGridTextColumn>
@@ -508,12 +529,15 @@
                         </TabItem>
                         <TabItem Header="Статистика логінів і паролів">
                             <DataGrid x:Name="DataGridLoginPasswordStat" ItemsSource="{Binding Login_Password_Stat}"
-                                          AutoGenerateColumns="False"
-                                          GridLinesVisibility="All" HeadersVisibility="Column"
-                                          Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue"
-                                          HorizontalScrollBarVisibility="Auto"  
-                                          VerticalScrollBarVisibility="Auto"
-                                          RowStyle="{DynamicResource DataGridRowNonSelectable}">
+                                         AutoGenerateColumns="False"
+                                        GridLinesVisibility="All" HeadersVisibility="Column"
+                                        RowBackground="{DynamicResource MaterialDesignSnackbarRipple}" 
+                                        AlternatingRowBackground="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                        Background="{DynamicResource MaterialDesignSnackbarBackground}"
+                                        Foreground="{DynamicResource MaterialDesignPaper}"
+                                        HorizontalScrollBarVisibility="Auto"  
+                                        VerticalScrollBarVisibility="Auto"
+                                        RowStyle="{DynamicResource DataGridRowNonSelectable}">
                                 <DataGrid.Columns >
                                     <materialDesign:DataGridTextColumn Header="Логін" Binding="{Binding Key[0]}"></materialDesign:DataGridTextColumn>
                                     <materialDesign:DataGridTextColumn Header="Пароль" Binding="{Binding Key[1]}" 
@@ -524,7 +548,7 @@
                         </TabItem>
                     </TabControl>
                 </TabItem>
-                <TabItem Name="TabEncrypt" IsEnabled="False">
+                <TabItem Name="TabEncrypt" Visibility="Collapsed">
                     <TabItem.Header>
                         <Viewbox>
                             <StackPanel Orientation="Vertical" Margin="-8,-8">
